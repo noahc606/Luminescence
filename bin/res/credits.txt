@@ -1,0 +1,43 @@
+BG video for "jades": Stock video by Rostislav Uzunov at https://www.pexels.com/video/sea-sunset-water-blue-7385122/
+BG video for "Whirlworld": https://pixabay.com/videos/mountains-clouds-4k-nature-cold-31175/
+
+"Neon Sunset":
+BG video:               https://pixabay.com/videos/neon-terrain-80-retro-abstract-21368/
+mus/bgm:                Space Dust by Karl Casey @ White Bat Audio
+sfx/create_square_a:    https://pixabay.com/sound-effects/flourish-spacey-1-86845/
+sfx/create_square_b:    https://pixabay.com/sound-effects/stutter-80791/
+sfx/move:               https://pixabay.com/sound-effects/doorscan-102283/
+sfx/move_dash:          https://pixabay.com/sound-effects/shimmer-synth-1-47675/
+sfx/move_drop:          https://pixabay.com/sound-effects/gun-laser-single-shot-sci-fi-102814/
+sfx/rotate_*            https://pixabay.com/sound-effects/spawn-sound-43782/
+sfx/score:              https://pixabay.com/sound-effects/classic-computing-sound-6165/
+sfx/timeline_erase_*    https://pixabay.com/sound-effects/cinematic-designed-sci-fi-whoosh-transition-nexawave-228295/
+sfx/timeline_touch      https://pixabay.com/sound-effects/bubblebeam-41985/
+
+
+"String Theory":
+BG video:               https://pixabay.com/videos/lines-red-geometry-abstract-12918/
+mus/bgm:                https://pixabay.com/music/mystery-dark-sci-fi-theme-1-153362/
+sfx/create_square_a:    https://pixabay.com/sound-effects/flourish-spacey-1-86845/
+sfx/create_square_b:    https://pixabay.com/sound-effects/stutter-80791/
+sfx/move:               https://pixabay.com/sound-effects/doorscan-102283/
+sfx/move_dash:          https://pixabay.com/sound-effects/elemental-magic-spell-impact-outgoing-228342/
+sfx/move_drop:          https://pixabay.com/sound-effects/gun-laser-single-shot-sci-fi-102814/
+sfx/rotate_*            https://pixabay.com/sound-effects/spawn-sound-43782/
+sfx/score:              https://pixabay.com/sound-effects/classic-computing-sound-6165/
+sfx/timeline_erase_*    https://pixabay.com/sound-effects/cinematic-designed-sci-fi-whoosh-transition-nexawave-228295/
+sfx/timeline_touch      https://pixabay.com/sound-effects/bubblebeam-41985/
+
+
+"Starstruck":
+BG video:               https://pixabay.com/videos/stars-christmas-loop-glowing-light-183279/
+mus/bgm:                Galaxy by Karl Casey @ White Bat Audio
+sfx/create_square_a:    https://pixabay.com/sound-effects/flourish-spacey-1-86845/
+sfx/create_square_b:    https://pixabay.com/sound-effects/stutter-80791/
+sfx/move:               https://pixabay.com/sound-effects/doorscan-102283/
+sfx/move_dash:          https://pixabay.com/sound-effects/shimmer-synth-1-47675/
+sfx/move_drop:          https://pixabay.com/sound-effects/gun-laser-single-shot-sci-fi-102814/
+sfx/rotate_*            https://pixabay.com/sound-effects/spawn-sound-43782/
+sfx/score:              https://pixabay.com/sound-effects/classic-computing-sound-6165/
+sfx/timeline_erase_*    https://pixabay.com/sound-effects/cinematic-designed-sci-fi-whoosh-transition-nexawave-228295/
+sfx/timeline_touch      https://pixabay.com/sound-effects/bubblebeam-41985/
