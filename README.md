@@ -34,12 +34,12 @@ Within 'bin' there are three executables. I built these three to demonstrate the
 | Linux x64    | Luminescence-linux-amd64  | Built on Debian 12            |
 | Linux ARMv7l | Luminescence-linux-armv7l | Built on Raspbian on a RPI3 * |   
 
-*There are slowdown/timing issues within the ARMv7l executable (32 bit OS issue?), but it is still playable. This is due to issues I still have to iron out within <a href="">NCH-CPP-Utils</a>.
+*There are slowdown/timing issues within the ARMv7l executable (32 bit OS issue?), but it is still playable. This is due to issues I still have to iron out within <a href="https://github.com/noahc606/nch-cpp-utils">NCH-CPP-Utils</a>.
 
 # Building
 Building is cross-platform and uses CMake.
 
-Due to the similar dependencies, you could also refer to <a>Back to Earth's build steps</a>.
+Due to the similar dependencies, you could also refer to <a href="https://github.com/noahc606/Back-to-Earth">Back to Earth's build steps</a>.
 
 ### Include 3rd Party Libraries
 If you are on Linux/MacOS, you should have the SDL2 and FFmpeg development libraries installed (Look at the linker flags near the bottom of the CMakeLists.txt). If you are on Windows, the linking step (with the -l) in the CMakeLists.txt can be confusing to get working properly. I recommend using MSYS2 and MinGW for building on Windows. Again, see the CMakeLists.txt for more info on this.
