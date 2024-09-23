@@ -224,9 +224,7 @@ bool Game::loadSelectedSkins()
         using namespace std;
         std::vector<std::pair<std::string, std::string>> preset = {
             make_pair("res/skins", "neodymium"),
-            make_pair("res/skins", "manager_class"),
-            make_pair("res/skins", "mental_gymnastic_60sec"),
-            make_pair("res/skins", "square_dance")
+            make_pair("res/skins", "manager_class")
         };
         for(int i = 0; i<preset.size(); i++) {
             int index = ss.getSkinIndexByRes(preset[i].first, preset[i].second);
