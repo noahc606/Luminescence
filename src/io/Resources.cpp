@@ -52,8 +52,12 @@ void Resources::init(SDL_Renderer* rend)
 	initImages(rend);
 	
 	int frequency = 48000;
-	if(configLowerQualityAudio) frequency /= 8;
-	if( Mix_OpenAudio(frequency, MIX_DEFAULT_FORMAT, 2, 1024)==-1 ) {
+	int channels = 2;
+	if(configLowerQualityAudio) {
+		frequency /= 16;
+		channels = 1;
+	}
+	if( Mix_OpenAudio(frequency, MIX_DEFAULT_FORMAT, channels, 1024)==-1 ) {
 		printf("Warning: SDL_mixer failed to open.");
 	}
 

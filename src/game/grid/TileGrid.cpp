@@ -383,7 +383,7 @@ void TileGrid::tickPlayer(Player* pl)
 
 void TileGrid::tickMainPlayerControls(Player* pl)
 {
-	int holdDelay = 25-tgs.getLevelTechnical()/16;
+	int holdDelay = 20-tgs.getLevelTechnical()/16;
 	if(holdDelay<15) holdDelay = 15;
 
 	int holdingRotR = nch::Input::keyDownTime(SDLK_w) + nch::Input::joystickHatDirTime(nch::Input::UP);		//W or joystick hat UP to rotate right

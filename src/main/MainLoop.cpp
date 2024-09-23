@@ -168,7 +168,7 @@ void MainLoop::draw(SDL_Renderer* rend)
 			debugTxt.setScale(0.15);
 		}
 
-		if(!true)
+		if(true)
 			debugTxt.draw(4, 4);
 	
 	
