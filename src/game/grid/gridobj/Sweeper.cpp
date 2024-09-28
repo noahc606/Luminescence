@@ -1,7 +1,7 @@
 #include "Sweeper.h"
-#include <nch/cpp-utils/gfx/Color.h>
-#include <nch/sdl-utils/Timer.h>
-#include <nch/sdl-utils/gfx/TexUtils.h>
+#include <nch/cpp-utils/color.h>
+#include <nch/sdl-utils/timer.h>
+#include <nch/sdl-utils/texture-utils.h>
 
 Sweeper::Sweeper(Skin* skin, uint64_t creationTimeMS)
 {
@@ -10,12 +10,12 @@ Sweeper::Sweeper(Skin* skin, uint64_t creationTimeMS)
 }
 Sweeper::~Sweeper(){}
 
-void Sweeper::tick(int elapsedIngameTimeMS)
+void Sweeper::tick(int elapsedIngameTimeMS, int numCols)
 {
     uint64_t elapsedTimeMS = elapsedIngameTimeMS-creationTimeMS;
     x = elapsedTimeMS*skin->getBPM()*32./(30.*1000.);
 
-    if(x/32.>skin->getNumCols()+2) {
+    if(x/32.>numCols+2) {
         offscreen = true;
     }
 

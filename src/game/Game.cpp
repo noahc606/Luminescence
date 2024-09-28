@@ -1,9 +1,9 @@
 #include "Game.h"
 #include <fstream>
 #include <nlohmann/json.hpp>
-#include <nch/cpp-utils/fs/FilePath.h>
-#include <nch/cpp-utils/fs/FsUtils.h>
-#include <nch/sdl-utils/Timer.h>
+#include <nch/cpp-utils/filepath.h>
+#include <nch/cpp-utils/fs-utils.h>
+#include <nch/sdl-utils/timer.h>
 #include "GridImg.h"
 #include "Main.h"
 
@@ -246,7 +246,7 @@ bool Game::loadSelectedSkins()
         if(skin==nullptr) {
             printf("Skin is null!\n");
         } else {
-            skin->load();
+            skin->load(tg.getNumCols(), tg.getNumRows());
         }
     }
     loadedSkinIDs = skindexes;

@@ -7,7 +7,7 @@ public:
     Sweeper(Skin* skin, uint64_t creationTimeMS);
     ~Sweeper();
 
-    void tick(int elapsedIngameTimeMS);
+    void tick(int elapsedIngameTimeMS, int numCols);
     void draw(SDL_Renderer* rend);
 
     bool isOffscreen();

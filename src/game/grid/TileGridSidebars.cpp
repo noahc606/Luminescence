@@ -1,5 +1,5 @@
 #include "TileGridSidebars.h"
-#include <nch/sdl-utils/Timer.h>
+#include <nch/sdl-utils/timer.h>
 #include "Main.h"
 #include "Resources.h"
 #include "TileGridManaged.h"
@@ -15,7 +15,7 @@ void TileGridSidebars::init(SDL_Renderer* rend, int difficulty)
 	scoreTxt.init(rend, Resources::getTTF(rsf));	scoreNTxt.init(rend, Resources::getTTF(rsf));
 	erasedTxt.init(rend, Resources::getTTF(rsf));	erasedNTxt.init(rend, Resources::getTTF(rsf));
 	comboTxt.init(rend, Resources::getTTF(rsf));	comboNTxt.init(rend, Resources::getTTF(rsf));
-	timelineTxt.init(rend, Resources::getTTF(Resources::bteFont));
+	timelineTxt.init(rend, Resources::getTTF(Resources::oswaldFont));
 	
 	sdlTickStarted = nch::Timer::getTicks64();
 }
@@ -46,7 +46,8 @@ void TileGridSidebars::drawSidebarUI(SDL_Renderer* rend, Skin* currSkin, nch::Te
 {
 	SDL_Rect bgr = Main::getBGRect();
 	SDL_Rect gr = *currSkin->getGridRect();
-	double s = 0.075*Main::getTextScale();
+	double heightScaleFactor = std::sqrt(188./t0.getUnscaledHeight());
+	double s = 0.075*Main::getTextScale()*heightScaleFactor;
 
 	//Statistic/Title
 	t0.setText(t0Str); t0.setScale(s);
@@ -94,7 +95,11 @@ void TileGridSidebars::draw(SDL_Renderer* rend, Skin* currSkin, Player* player, 
 	//Time Line: Draw number of squares sweeped this cycle
 	std::stringstream ss; ss << numSweepedThisCycle;
 	timelineTxt.setText(ss.str());
-	timelineTxt.setScale(0.15*currSkin->getGridScale());
+	
+
+	double heightScaleFactor = std::sqrt(188./timelineTxt.getUnscaledHeight());
+	
+	timelineTxt.setScale(0.15*currSkin->getGridScale()*heightScaleFactor);
 	timelineTxt.draw(
 		currSkin->getGridRect()->x+mainSweeperX*currSkin->getGridScale()-timelineTxt.getWidth()*1.5,
 		currSkin->getGridRect()->y-timelineTxt.getHeight()+4*currSkin->getGridScale()
@@ -125,6 +130,21 @@ int TileGridSidebars::getLevelShown() { return level; }
 int TileGridSidebars::getLevelTechnical() { return levelTechnical; }
 int TileGridSidebars::getTotalErasedShown() { return totalErased; }
 int TileGridSidebars::getTotalErasedTechnical() { return totalErasedTechnical; }
+int TileGridSidebars::getPlayerQueueCommonType()
+{
+	int type1Count = 0;
+	int type2Count = 0;
+	for(int i = 0; i<playerQueue.size(); i++) {
+		Player tpl = playerQueue[i];
+		for(int j = 0; j<4; j++) {
+			if(tpl.getTile(j).type==1) { type1Count++; } else { type2Count++; }
+		}
+	}
+
+	if(type1Count>type2Count) return 1;
+	if(type2Count>type1Count) return 2;
+	return -1;
+}
 
 void TileGridSidebars::resetPlayerQueue(Player* player, int px, int py)
 {
@@ -160,8 +180,8 @@ void TileGridSidebars::incrementTotalErased(int by)
 
 void TileGridSidebars::giveSingleColorBonus()
 {
-	if(canGetBonus) {
-		canGetBonus = false;
+	if(canGetSCBonus) {
+		canGetSCBonus = false;
 		incrementTotalScore(1000);
 		scoreBonusSingleColor = true;
 	}
@@ -169,14 +189,17 @@ void TileGridSidebars::giveSingleColorBonus()
 
 void TileGridSidebars::giveAllClearBonus()
 {
-	if(canGetBonus) {
-		canGetBonus = false;
+	if(canGetACBonus) {
+		canGetACBonus = false;
 		incrementTotalScore(10000);
 		scoreBonusAllClear = true;
 	}
 }
 
-void TileGridSidebars::enableBonus() { canGetBonus = true; }
+void TileGridSidebars::enableBonus() {
+	canGetSCBonus = true;
+	canGetACBonus = true;
+}
 
 bool TileGridSidebars::popSingleColorBonus()
 {

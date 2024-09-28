@@ -1,7 +1,7 @@
 #pragma once
-#include <nch/cpp-utils/gfx/Color.h>
-#include <nch/ffmpeg-utils/media/MediaPlayer.h>
-#include <nch/sdl-utils/gfx/Text.h>
+#include <nch/cpp-utils/color.h>
+#include <nch/ffmpeg-utils/mediaplayer.h>
+#include <nch/sdl-utils/text.h>
 #include <SDL2/SDL.h>
 #include <string>
 
@@ -11,10 +11,10 @@ public:
     Skin(std::string parentDir, std::string id, SDL_Renderer* rend);
     ~Skin();
 
-    void load();
+    void load(int numCols, int numRows);
     void activate(uint64_t ingameTimeMS);
     void deactivate();
-    void draw();
+    void draw(int numCols, int numRows);
 
     nch::Color getColorFromTileType(int tileType);
     SDL_Texture* getTileTexByType(int type);
@@ -28,7 +28,6 @@ public:
     double getMusicVolumeFactor();
 
     bool areScorePanelsGeneric();
-    int getNumRows(); int getNumCols();
     int64_t getMaxFallTimeMS();
     uint64_t getMusicStartTimeMS();
     SDL_Rect* getGridRect();
@@ -49,8 +48,8 @@ public:
 private:
     static void onMusicFinished();
     void drawSkinInfoUI();
-    void updateGridRect();
-    void updateScaling();
+    void updateGridRect(int numCols, int numRows);
+    void updateScaling(int numCols, int numRows);
 
     //Skin properties
     std::string parentDir = "?null?";
@@ -63,8 +62,6 @@ private:
     bool scorePanelsGeneric = true;
 
     //Game properties
-	int numCols = (int)(16);
-	int numRows = (int)(10);
 	int64_t maxFallTimeMS = 1000000;
     uint64_t musicStartTimeMS = 0;
     static bool musicStopped;

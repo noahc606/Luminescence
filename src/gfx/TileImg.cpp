@@ -1,7 +1,7 @@
 #include "TileImg.h"
 #include <iostream>
-#include <nch/sdl-utils/gfx/TexUtils.h>
-#include <nch/sdl-utils/Timer.h>
+#include <nch/sdl-utils/texture-utils.h>
+#include <nch/sdl-utils/timer.h>
 #include "Color.h"
 #include "TileGrid.h"
 #include "Main.h"

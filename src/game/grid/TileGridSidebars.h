@@ -1,5 +1,5 @@
 #pragma once
-#include <nch/sdl-utils/gfx/Text.h>
+#include <nch/sdl-utils/text.h>
 #include <sstream>
 #include "Player.h"
 #include "Skin.h"
@@ -17,6 +17,7 @@ public:
 	int getLevelTechnical();
 	int getTotalErasedShown();
 	int getTotalErasedTechnical();
+	int getPlayerQueueCommonType();
 
 	void resetPlayerQueue(Player* player, int px, int py);
 	void incrementLevel();
@@ -43,7 +44,8 @@ private:
 	nch::Text comboTxt; nch::Text comboNTxt;
 	nch::Text timelineTxt;
 
-	bool canGetBonus = false;
+	bool canGetACBonus = false;
+	bool canGetSCBonus = false;
 	bool scoreBonusSingleColor = false;
 	bool scoreBonusAllClear = false;
 

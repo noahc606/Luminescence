@@ -19,13 +19,13 @@ void Particle::init(double x, double y, int type, SDL_Renderer* rend, nch::Color
     //Init infoTxt based on type
     if(rend!=nullptr) {
         if(type==SWEEP_COUNT_INDICATOR) {
-            infoTxt.init(rend, Resources::getTTF(Resources::carlitoFont));
+            infoTxt.init(rend, Resources::getTTF(Resources::primaryFont));
             std::stringstream ss; ss << info;
             infoTxt.setText(ss.str());
         }
         if(type==SCORE_BONUS) {
             std::string str = "???null???";
-            infoTxt.init(rend, Resources::getTTF(Resources::carlitoFont));
+            infoTxt.init(rend, Resources::getTTF(Resources::primaryFont));
             if(info==0) { str = "SINGLE COLOR BONUS +1000pts"; }
             if(info==1) { str = "ALL CLEAR BONUS +10000pts"; }
             infoTxt.setText(str);

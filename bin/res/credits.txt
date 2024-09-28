@@ -1,3 +1,12 @@
+[ AUDIO ]
+
+button_click:           https://pixabay.com/sound-effects/warning-notification-call-184996/
+button_select:          https://pixabay.com/sound-effects/notification-beep-229154/
+notification_1:         https://pixabay.com/sound-effects/phone-notification-100701/
+
+
+[ SKINS ]
+
 BG video for "jades": Stock video by Rostislav Uzunov at https://www.pexels.com/video/sea-sunset-water-blue-7385122/
 BG video for "Whirlworld": https://pixabay.com/videos/mountains-clouds-4k-nature-cold-31175/
 

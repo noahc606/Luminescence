@@ -1,5 +1,5 @@
 #pragma once
-#include <nch/sdl-utils/Input.h>
+#include <nch/sdl-utils/input.h>
 #include <stdbool.h>
 #include <SDL2/SDL.h>
 #include "Game.h"

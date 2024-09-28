@@ -1,15 +1,19 @@
 #include "TileGridManaged.h"
-#include <nch/cpp-utils/io/Log.h>
-#include <nch/sdl-utils/Timer.h>
+#include <nch/cpp-utils/log.h>
+#include <nch/sdl-utils/timer.h>
 #include "Resources.h"
 #include "TileImg.h"
 
-void TileGridManaged::init()
+void TileGridManaged::init(Skin* currSkin)
 {
-	for(int x = 0; x<currSkin->getNumCols(); x++) {
+	//Set current skin
+	TileGridManaged::currSkin = currSkin;
+
+	/* Build 2D grid array and fill with all zeros */
+	for(int x = 0; x<numCols; x++) {
 		//Build the current column and fill it with squares
 		std::vector<Tile> thisCol;
-		for(int y = currSkin->getNumRows()-1; y>=0; y--) {
+		for(int y = numRows-1; y>=0; y--) {
 			Tile s(0*(rand()%2+1));
 			thisCol.push_back(s);
 		}
@@ -20,19 +24,17 @@ void TileGridManaged::init()
 	lastStartTimeMS = nch::Timer::getTicks64();
 }
 
-Tile TileGridManaged::getTile(int x, int y, std::vector<std::vector<Tile>>& grid)
+Tile TileGridManaged::getTileWithin(t_grid& grid, int x, int y)
 {
-	if( x>=0 && x<grid.size() && y<0 ) { return Tile(0); }
-
-	if( x<0 || y<0 ) { return Tile(); }
-	if( x>=grid.size() ) { return Tile(); }
-	if( y>=grid[x].size() ) { return Tile(); }
-	return grid[x][y];
+	if( x>=0 && x<grid.size() && y<0 ) { return Tile(0); }	//Tiles above grid but not within are air (0)
+	if( x<0 || x>=grid.size()) { return Tile(); }			//Tiles left or right of grid are solid (-1)
+	if( y>=grid[x].size() ) { return Tile(); }				//Tiles bottom of grid are solid (-1)
+	return grid[x][y];										//Return normal tile position which may be 0, 1, or 2
 }
 
 Tile TileGridManaged::getTile(int x, int y)
 {
-	return getTile(x, y, grid);
+	return getTileWithin(grid, x, y);
 }
 
 bool TileGridManaged::isTilePartComplete(int x, int y)
@@ -48,11 +50,7 @@ bool TileGridManaged::isTilePartComplete(int x, int y)
 	return false;
 }
 
-std::vector<std::vector<Tile>> TileGridManaged::getGridCopy()
-{
-	return grid;
-}
-
+TileGridManaged::t_grid TileGridManaged::getGridCopy() { return grid; }
 
 void TileGridManaged::tickFallingTiles()
 {
@@ -135,8 +133,8 @@ void TileGridManaged::drawTiles(SDL_Renderer* rend)
 	}
 
 	//Solid, unmoving tiles within 'grid'
-	for(int x = 0; x<currSkin->getNumCols(); x++) {
-		for(int y = 0; y<currSkin->getNumRows(); y++) {
+	for(int x = 0; x<numCols; x++) {
+		for(int y = 0; y<numRows; y++) {
 
 			bool shouldDraw = true;
 			if(getTile(x-1, y-1).complete && !getTile(x, y).faded) shouldDraw = false;
@@ -151,7 +149,7 @@ void TileGridManaged::drawTiles(SDL_Renderer* rend)
 	}
 }
 
-int64_t TileGridManaged::getFallTimeMS(double level, Skin* currSkin)
+uint64_t TileGridManaged::getFallTimeMS(double level, Skin* currSkin)
 {
 	double lvl = level;
 
@@ -167,7 +165,7 @@ int64_t TileGridManaged::getFallTimeMS(double level, Skin* currSkin)
 		fallTimeMS = 0;
 	}
 
-	return fallTimeMS;
+	return (uint64_t)fallTimeMS;
 }
 
 bool TileGridManaged::tryEraseFadedTiles(bool all, TileGridSidebars& tgs)
@@ -178,8 +176,8 @@ bool TileGridManaged::tryEraseFadedTiles(bool all, TileGridSidebars& tgs)
 	//Erase faded tiles (tiles that were just sweeped) and increment numSweepedThisCycle.
 	int maxCol = lastColSweeped;
 	if(all) maxCol = 999999;
-	for(int x = 0; x<currSkin->getNumCols() && x<=maxCol; x++)
-	for(int y = 0; y<currSkin->getNumRows(); y++) {
+	for(int x = 0; x<numCols && x<=maxCol; x++)
+	for(int y = 0; y<numRows; y++) {
 		Tile t = getTile(x, y);
 		if(t.faded) {
 			setTile(x, y, Tile(0));
@@ -201,13 +199,14 @@ bool TileGridManaged::tryEraseFadedTiles(bool all, TileGridSidebars& tgs)
 	return false;
 }
 
-void TileGridManaged::setTile(int x, int y, Tile t)
+void TileGridManaged::setTileWithin(t_grid& grid, int x, int y, Tile t)
 {
 	if( x<0 || y<0 ) { return; }
 	if( x>=grid.size() ) { return; }
 	if( y>=grid[x].size() ) { return; }
 	grid[x][y] = t;
 }
+void TileGridManaged::setTile(int x, int y, Tile t) { setTileWithin(grid, x, y, t); }
 
 void TileGridManaged::setTileComplete(int x, int y, bool complete)
 {

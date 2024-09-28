@@ -1,9 +1,9 @@
 #include "Skin.h"
 #include <iostream>
-#include <nch/cpp-utils/fs/FsUtils.h>
-#include <nch/sdl-utils/gfx/Text.h>
-#include <nch/sdl-utils/gfx/TexUtils.h>
-#include <nch/sdl-utils/Timer.h>
+#include <nch/cpp-utils/fs-utils.h>
+#include <nch/sdl-utils/text.h>
+#include <nch/sdl-utils/texture-utils.h>
+#include <nch/sdl-utils/timer.h>
 #include "Game.h"
 #include "GridImg.h"
 #include "Main.h"
@@ -32,7 +32,7 @@ Skin::~Skin()
     SDL_DestroyTexture(square2Tex);
 }
 
-void Skin::load()
+void Skin::load(int numCols, int numRows)
 {
     //Get a single avg color from each of the textures of tile_a and tile_b
     tile1Color = TileImg::getTileCompositeColor(rend, parentDir+"/"+id+"/tile_a");
@@ -43,7 +43,7 @@ void Skin::load()
     TileImg::buildTileTex(rend, tile2Tex, this, 2);
     TileImg::buildSquareTex(rend, square1Tex, this, 1);
     TileImg::buildSquareTex(rend, square2Tex, this, 2);
-	GridImg::buildGridTex(rend, gridTex, getNumCols(), getNumRows());
+	GridImg::buildGridTex(rend, gridTex, numCols, numRows);
 
     //Decode and play video
     std::string videoPath = nch::FsUtils::getPathWithInferredExtension(parentDir+"/"+id+"/bg");
@@ -76,7 +76,7 @@ void Skin::deactivate()
     active = false;
 }
 
-void Skin::draw()
+void Skin::draw(int numCols, int numRows)
 {
     //Set bgColorMod's alpha component depending on skin changer state
     SkinChanger sc = Game::getSkinChanger();
@@ -143,8 +143,8 @@ void Skin::draw()
         }
     }
     
-    updateScaling();
-    updateGridRect();
+    updateScaling(numCols, numRows);
+    updateGridRect(numCols, numRows);
 
 	//Draw gridTex (background)
 	SDL_RenderCopy(rend, gridTex, NULL, &gridRect);
@@ -187,8 +187,6 @@ std::string Skin::getStylizedName() { return stylizedName; }
 double Skin::getBPM() { return bpm; }
 double Skin::getMusicVolumeFactor() { return musicVolumeFactor; }
 bool Skin::areScorePanelsGeneric() { return scorePanelsGeneric; }
-int Skin::getNumCols() { return numCols; }
-int Skin::getNumRows() { return numRows; }
 int64_t Skin::getMaxFallTimeMS() { return maxFallTimeMS; }
 uint64_t Skin::getMusicStartTimeMS() { return musicStartTimeMS; }
 SDL_Rect* Skin::getGridRect() { return &gridRect; }
@@ -246,22 +244,22 @@ void Skin::drawSkinInfoUI()
     skinBpmTxt.draw(t2x, t2y);
 }
 
-void Skin::updateScaling()
+void Skin::updateScaling(int numCols, int numRows)
 {
     //Grid scale
 	gridScale = 10;
 	int playWidth = Main::getWidth()*2/3;
 	int playHeight = Main::getHeight()*2/3;
 	
-	while(getNumCols()*32*gridScale>playWidth) { gridScale -= 0.125; }
-	while(getNumRows()*32*gridScale>playHeight) { gridScale -= 0.125; }
+	while(numCols*32*gridScale>playWidth) { gridScale -= 0.125; }
+	while(numRows*32*gridScale>playHeight) { gridScale -= 0.125; }
 	if(gridScale<0.25) gridScale = 0.25;
 }
 
-void Skin::updateGridRect()
+void Skin::updateGridRect(int numCols, int numRows)
 {
-	gridRect.w = gridScale*32*getNumCols();
-	gridRect.h = gridScale*32*getNumRows();
+	gridRect.w = gridScale*32*numCols;
+	gridRect.h = gridScale*32*numRows;
 	gridRect.x = Main::getWidth()/2-gridRect.w/2;
 	gridRect.y = Main::getHeight()/2-gridRect.h/2;
 }

@@ -5,6 +5,11 @@
     "bpm": 60.0
 },
 {
+    "id": "machine_interface_normal",
+    "stylizedName": "MACHINE INTERFACE",
+    "bpm": 100.0
+},
+{
     "id": "manager_class",
     "stylizedName": "Manager class",
     "bpm": 100.0

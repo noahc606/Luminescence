@@ -1,15 +1,16 @@
 #include "Resources.h"
 #include <fstream>
-#include <nch/cpp-utils/fs/FsUtils.h>
-#include <nch/sdl-utils/Timer.h>
-#include <nch/sdl-utils/gfx/TexUtils.h>
+#include <nch/cpp-utils/fs-utils.h>
+#include <nch/sdl-utils/timer.h>
+#include <nch/sdl-utils/texture-utils.h>
 #include <nlohmann/json.hpp>
 #include "Main.h"
 
 const std::string Resources::primaryFont = "data/misc/FOT-MangiaCondBold";
 const std::string Resources::sidebarFont = "data/misc/FOT-BullheadedBold";
+
 const std::string Resources::orbitronFont = "res/fonts/Orbitron";
-const std::string Resources::carlitoFont = "res/fonts/Carlito/bold";
+const std::string Resources::oswaldFont = "res/fonts/Oswald";
 const std::string Resources::bteFont = "res/fonts/BackToEarth";
 
 std::map<std::string, TTF_Font*> Resources::ttfResources;
@@ -54,7 +55,7 @@ void Resources::init(SDL_Renderer* rend)
 	int frequency = 48000;
 	int channels = 2;
 	if(configLowerQualityAudio) {
-		frequency /= 16;
+		frequency /= 4;
 		channels = 1;
 	}
 	if( Mix_OpenAudio(frequency, MIX_DEFAULT_FORMAT, channels, 1024)==-1 ) {
@@ -89,8 +90,8 @@ TTF_Font* Resources::getTTF(std::string asset, bool canFallback)
 		}
 		if(canFallback) {
 			//Fallback for specific fonts
-			if(asset==primaryFont) { return getTTF("res/fonts/Orbitron"); }
-			if(asset==sidebarFont) { return getTTF("res/fonts/Orbitron"); }
+			if(asset==primaryFont) { return getTTF(oswaldFont); }
+			if(asset==sidebarFont) { return getTTF(oswaldFont); }
 
 			//Fallback for everything else: FreeMono
 			if(asset!="res/fonts/FreeMono") {

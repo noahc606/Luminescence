@@ -10,18 +10,21 @@
 
 class TileGridManaged {
 public:
-	void init();
-	static Tile getTile(int x, int y, std::vector<std::vector<Tile>>& grid);
+	typedef std::vector<std::vector<Tile>> t_grid;
+
+	void init(Skin* currSkin);
+	static Tile getTileWithin(t_grid& grid, int x, int y);
     Tile getTile(int x, int y);
     bool isTilePartComplete(int x, int y);
-	std::vector<std::vector<Tile>> getGridCopy();
-	static int64_t getFallTimeMS(double level, Skin* currSkin);
+	t_grid getGridCopy();
+	static uint64_t getFallTimeMS(double level, Skin* currSkin);
 	
 
 	void tickFallingTiles();
 	void drawTiles(SDL_Renderer* rend);
 
 	bool tryEraseFadedTiles(bool all, TileGridSidebars& tgs);
+    static void setTileWithin(t_grid& grid, int x, int y, Tile t);
     void setTile(int x, int y, Tile t);
 	void setTileComplete(int x, int y, bool complete);
 	void setFallingTile(int x, int y, Tile t, double weight);
@@ -33,8 +36,10 @@ public:
 	Skin* currSkin;
 
 	//Tiles
-	std::vector<std::vector<Tile>> grid;
+	t_grid grid;
 	std::vector<FallingTile> fallingTiles;
+	const int numCols = (int)(16);
+	const int numRows = (int)(10);
 
 	//Logic
     int64_t counter = 0;

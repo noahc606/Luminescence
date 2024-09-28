@@ -1,7 +1,7 @@
 #include "TileGrid.h"
-#include <nch/cpp-utils/io/Log.h>
-#include <nch/sdl-utils/Input.h>
-#include <nch/sdl-utils/Timer.h>
+#include <nch/cpp-utils/log.h>
+#include <nch/sdl-utils/input.h>
+#include <nch/sdl-utils/timer.h>
 #include <set>
 #include <time.h>
 #include "GridImg.h"
@@ -13,26 +13,26 @@
 
 void TileGrid::init(SDL_Renderer* rend, std::vector<Skin*> skins, int currSkinID, int difficulty)
 {
-	//Sanity check for skins
+	//Setup skins
 	if(skins.size()==0) {
 		printf("Error: skins.size()==0 (TileGrid::init() at the wrong time?)\n");
 		return;
 	}
-
-	//Skins and player
 	TileGrid::skins = skins;
-	tgm.currSkin = TileGrid::skins[currSkinID];
+
+	//Setup TileGrid subsystems - TileGridManaged and TileGridSidebars
+	tgm.init(TileGrid::skins[currSkinID]);
+	tgs.init(rend, difficulty);
+
+	//Setup player(s)
 	players.clear();
 	if(!true) {
-		players.push_back(new Player(tgm.currSkin->getNumCols()/2-1, -2, true)); 
+		players.pushBack(new Player(tgm.numCols/2-1, -2, true));
 	} else {
-		players.push_back(new Player(tgm.currSkin->getNumCols()/2-1, -2)); 
+		players.pushBack(new Player(tgm.numRows/2-1, -2)); 
 	}
-	PlayerController::reset(players[0], tgm, tgs);
-
-	//Init tile grid
-	tgs.init(rend, difficulty);
-	tgm.init();
+	PlayerController::reset(players[0], &tgm, tgs);
+	pAIC.init(players[0], &tgm);
 }
 
 void TileGrid::draw(SDL_Renderer* rend)
@@ -42,7 +42,7 @@ void TileGrid::draw(SDL_Renderer* rend)
 	for(int i = 0; i<skins.size(); i++) {
 		Skin* temp = skins[i];
 		if(temp->isActive()) {
-			temp->draw();
+			temp->draw(tgm.numCols, tgm.numRows);
 		}
 	}
 
@@ -81,9 +81,19 @@ void TileGrid::draw(SDL_Renderer* rend)
 
 void TileGrid::drawDebug(std::stringstream& ss)
 {
+	
 	uint64_t elapsedMusicTimeMS = getIngameTicks64()-tgm.currSkin->getMusicStartTimeMS();
 	double sweepTimer = elapsedMusicTimeMS*tgm.currSkin->getBPM()/(30.*1000.);
-	ss << "sweepTimer=" << sweepTimer << ";\n";
+	//ss << "sweepTimer=" << sweepTimer << ";\n";
+	
+	std::pair<int, int> tc = pAIC.getTraversableColumns();
+	ss << "traversableCols(min, max)=(" << tc.first << ", " << tc.second << ");\n";
+	ss << "tgs.getPlayerQueueCommonType()=" << tgs.getPlayerQueueCommonType() << ";\n";
+
+	//std::pair<int, int> ai = PlayerController::aiChooseDropCol(players[0], tgm, 1);
+	//ss << "optimalMove(rotations, position)=(" << ai.first << ", " << ai.second << ");\n";
+
+
 	tgs.drawDebug(ss, tgm.currSkin);
 }
 
@@ -165,6 +175,9 @@ uint64_t TileGrid::getIngameTicks64()
 		tgm.lastStartTimeMS;
 }
 
+int TileGrid::getNumCols() { return tgm.numCols; }
+int TileGrid::getNumRows() { return tgm.numRows; }
+
 void TileGrid::tickSweepers()
 {
 	//Track number of squares sweeped and add it to the score
@@ -178,7 +191,7 @@ void TileGrid::tickSweepers()
 	//We need to have sweeper creation sync up with music and sound effects (the skin's BPM).
 	uint64_t elapsedMusicTimeMS = getIngameTicks64()-tgm.currSkin->getMusicStartTimeMS();
 	tgm.sweepTimer = elapsedMusicTimeMS*tgm.currSkin->getBPM()*32./(30.*1000.);
-	uint64_t idealSweepPos = tgm.sweepTimer%(tgm.currSkin->getNumCols()*32);
+	uint64_t idealSweepPos = tgm.sweepTimer%(tgm.numCols*32);
 	if(idealSweepPos<tgm.lastIdealSweepPos) {
 		sweepers.push_back(Sweeper(tgm.currSkin, getIngameTicks64()));
 		tgm.lastIdealSweepPos = idealSweepPos;
@@ -195,9 +208,9 @@ void TileGrid::tickSweepers()
 		
 		bool foundComplete = false;
 		int numCompletes = 0;
-		for(int y = 0; y<tgm.currSkin->getNumRows(); y++) {
+		for(int y = 0; y<tgm.numRows; y++) {
 			int x = colSweeped;
-			if(x==-1) x = tgm.currSkin->getNumCols()-1;
+			if(x==-1) x = tgm.numCols-1;
 
 			if(tgm.isTilePartComplete(x, y)) {
 				Tile t = tgm.getTile(x, y);
@@ -239,15 +252,15 @@ void TileGrid::tickSweepers()
 
 	//Tick sweepers
 	for(int i = 0; i<sweepers.size(); i++) {
-		sweepers[i].tick(getIngameTicks64());
+		sweepers[i].tick(getIngameTicks64(), tgm.numCols);
 	}
 }
 
 void TileGrid::tickStaticTiles()
 {
 	//Mark the top left tile of any same-color 2x2 as "complete"
-	for(int x = 0; x<tgm.currSkin->getNumCols(); x++)
-	for(int y = 0; y<tgm.currSkin->getNumRows(); y++) {
+	for(int x = 0; x<tgm.numCols; x++)
+	for(int y = 0; y<tgm.numRows; y++) {
 		bool complete2x2 = true;
 		int thisType = tgm.getTile(x, y).type;
 		if(thisType<=0) {
@@ -280,8 +293,8 @@ void TileGrid::tickStaticTiles()
 	}
 
 	//All tiles next to a tile that is a chain tile will have its chainPart flag enabled.
-	for(int x = 0; x<tgm.currSkin->getNumCols(); x++)
-	for(int y = 0; y<tgm.currSkin->getNumRows(); y++) {
+	for(int x = 0; x<tgm.numCols; x++)
+	for(int y = 0; y<tgm.numRows; y++) {
 		Tile t1 = tgm.getTile(x, y);
 		int msx = std::floor(getMainSweeperX()/32.-0.5);
 		if( (t1.chainStart || t1.chainPart) && !t1.faded && x!=msx-1 && x!=msx) {
@@ -298,8 +311,8 @@ void TileGrid::tickStaticTiles()
 	}
 
 	//Cause floating tiles to fall (go from bottom to top, so all tiles in a column fall at the same time)
-	for(int x = 0; x<tgm.currSkin->getNumCols(); x++)
-	for(int y = tgm.currSkin->getNumRows()-1; y>=0; y--) {
+	for(int x = 0; x<tgm.numCols; x++)
+	for(int y = tgm.numRows-1; y>=0; y--) {
 		if(tgm.getTile(x, y).type>0 && tgm.getTile(x, y+1).type==0) {
 			tgm.setTileToFalling(x, y);
 		}
@@ -331,54 +344,18 @@ void TileGrid::tickParticles()
 
 void TileGrid::tickPlayer(Player* pl)
 {
-	int px = pl->getX();
-	int py = pl->getY();
-
 	//Calculate fall time based on skin and level
 	int64_t fallTimeMS = tgm.getFallTimeMS(tgs.getLevelTechnical(), tgm.currSkin);
 	
 	//Fall every 'fallTimeMS' millseconds
 	if(pl->getCooldown()>=0) {
-		if(getIngameTicks64()>=pl->getLastFallMS()+fallTimeMS) {
-			pl->updateLastFallMS(getIngameTicks64());
-
-			//"Test fall"
-			bool willCollide = false;
-			pl->setY(py+1);
-			if(PlayerController::isColliding(pl, tgm)) {
-				willCollide = true;
-				pl->setY(py);
-			}
-
-			//If the player will collide, then cause tiles to fall
-			if(willCollide) {
-				int psa = PlayerController::getSlideAmount(pl, tgm);
-				px += psa;
-
-				//Loss type 1
-				if(psa==0) {
-					if(pl->getY()==-2) {
-						tgm.lose();
-					}
-				}
-
-				if(pl->getY()>-1 || psa!=0) {
-					tgm.setFallingTile(px+0, py+0, pl->getTile(0), 0.075);
-					tgm.setFallingTile(px+1, py+0, pl->getTile(1), 0.075);
-				}
-				tgm.setFallingTile(px+0, py+1, pl->getTile(2), 0.075);
-				tgm.setFallingTile(px+1, py+1, pl->getTile(3), 0.075);
-				PlayerController::reset(pl, tgm, tgs);
-				tgs.enableBonus();
-				Resources::playAudio(tgm.currSkin->getParentDir()+"/"+tgm.currSkin->getID()+"/sfx/move_drop");
-			}
-		}
+		PlayerController::idleFall(pl, &tgm, tgs, getIngameTicks64(), fallTimeMS);
 	}
 
 	pl->tick();
 
 	if(pl->isMainPlayer()) { tickMainPlayerControls(pl); }
-	if(pl->isAIControlled()) { tickAIPlayerControls(pl); }
+	if(pl->isAIControlled()) { pAIC.tick(tgs, getIngameTicks64()); }
 }
 
 void TileGrid::tickMainPlayerControls(Player* pl)
@@ -395,32 +372,21 @@ void TileGrid::tickMainPlayerControls(Player* pl)
 	//ESCAPE or joystick button 9 to pause
 
 	//Rotate left, right
-	if(holdingRotR==1 && holdingRotL!=1) { PlayerController::rotateRight(pl, tgm); }
-	if(holdingRotL==1 && holdingRotR!=1) { PlayerController::rotateLeft(pl, tgm); }
+	if(holdingRotR==1 && holdingRotL!=1) { PlayerController::ctrlRotateRight(pl, &tgm); }
+	if(holdingRotL==1 && holdingRotR!=1) { PlayerController::ctrlRotateLeft(pl, &tgm); }
 
 	//Moving left and right
 	if( holdingRight==0 && (holdingLeft==1 || (holdingLeft>holdDelay && pl->getCooldown()>=-60+holdDelay)) ) {
-		PlayerController::moveLeft(pl, tgm, holdingLeft, holdDelay);
+		PlayerController::ctrlMoveLeft(pl, &tgm, holdingLeft, holdDelay);
 	}
 	if( holdingLeft==0 && (holdingRight==1 || (holdingRight>holdDelay && pl->getCooldown()>=-60+holdDelay)) ) {
-		PlayerController::moveRight(pl, tgm, holdingRight, holdDelay);
+		PlayerController::ctrlMoveRight(pl, &tgm, holdingRight, holdDelay);
 	}
 
 	//Hard dropping
 	if(holdingDrop==1 || holdingDrop>holdDelay && holdingDrop%20==0) {
-		PlayerController::drop(pl, tgm, tgs, getIngameTicks64());
+		PlayerController::ctrlDrop(pl, &tgm, tgs, getIngameTicks64());
 	}
-}
-
-void TileGrid::tickAIPlayerControls(Player* pl)
-{
-	if(tickCounter%100==0) {
-		
-
-
-		PlayerController::rotateLeft(pl, tgm);
-	}
-
 }
 
 void TileGrid::addParticle(Particle* p) { particles.push_back(p); }
@@ -430,8 +396,8 @@ void TileGrid::scoreBonusCheck()
 	//See if the grid has a single color or is all clear
 	int tilesFound = 0;
 	int firstTileTypeFound = 0;
-	for(int x = 0; x<tgm.currSkin->getNumCols(); x++)
-	for(int y = 0; y<tgm.currSkin->getNumRows(); y++) {
+	for(int x = 0; x<tgm.numCols; x++)
+	for(int y = 0; y<tgm.numRows; y++) {
 		int tt = tgm.getTile(x, y).type;
 		if(tt!=0) {
 			tilesFound++;
@@ -462,9 +428,6 @@ void TileGrid::scoreBonusCheck()
 
 void TileGrid::onSweepCycleComplete()
 {
-	//Get rid of all complete tiles on the rightmost column
-
-
 	//Don't lose combos during skin level up
 	uint64_t skinElapsedTimeMS = getIngameTicks64()-tgm.currSkin->getMusicStartTimeMS();
 	if(skinElapsedTimeMS<100) return;
@@ -504,4 +467,3 @@ void TileGrid::onSweepCycleComplete()
 		tgm.currSkin->playMusic(tgm.currSkin);
 	}
 }
-

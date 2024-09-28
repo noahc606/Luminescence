@@ -22,6 +22,7 @@ public:
 	int getX();
 	int getY();
 	Tile getTile(int index);
+	bool areAllTilesSame();
 	int getCooldown();
 	bool isAIControlled();
 	bool isMainPlayer();

@@ -1,8 +1,8 @@
 #include "Tests.h"
 #include <iostream>
-#include <nch/cpp-utils/fs/FilePath.h>
-#include <nch/cpp-utils/fs/FsUtils.h>
-#include <nch/sdl-utils/Timer.h>
+#include <nch/cpp-utils/filepath.h>
+#include <nch/cpp-utils/fs-utils.h>
+#include <nch/sdl-utils/timer.h>
 #include <SDL2/SDL.h>
 #include "Color.h"
 #include "Resources.h"

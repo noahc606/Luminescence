@@ -1,7 +1,7 @@
 #include "SkinSelect.h"
-#include <nch/cpp-utils/io/Log.h>
-#include <nch/sdl-utils/Input.h>
-#include <nch/sdl-utils/gfx/Text.h>
+#include <nch/cpp-utils/log.h>
+#include <nch/sdl-utils/input.h>
+#include <nch/sdl-utils/text.h>
 #include "Main.h"
 #include "Resources.h"
 #include "Button.h"

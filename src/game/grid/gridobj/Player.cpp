@@ -1,6 +1,6 @@
 #include "Player.h"
 #include "Main.h"
-#include <nch/sdl-utils/Timer.h>
+#include <nch/sdl-utils/timer.h>
 #include "TileImg.h"
 
 Player::Player(){}
@@ -72,6 +72,7 @@ void Player::drawQueuePiece(SDL_Renderer* rend, Skin* skin, double x, double y)
 
 void Player::draw(SDL_Renderer* rend, Skin* skin, double tx, double ty)
 {
+	std::vector<int> asdf;
 	TileImg::drawTile(rend, skin, tx+0, ty+0, tiles[0]);
 	TileImg::drawTile(rend, skin, tx+1, ty+0, tiles[1]);
 	TileImg::drawTile(rend, skin, tx+0, ty+1, tiles[2]);
@@ -90,6 +91,16 @@ Tile Player::getTile(int index)
 {
 	if(index<0 || index>=4) return Tile();
 	return tiles[index];
+}
+bool Player::areAllTilesSame()
+{
+	int seenType = getTile(0).type;
+	for(int i = 1; i<4; i++) {
+		if(getTile(i).type!=seenType) {
+			return false;
+		}
+	}
+	return true;
 }
 int Player::getCooldown() { return cooldown; }
 bool Player::isAIControlled() { return id==AI_PLAYER; }
@@ -123,10 +134,13 @@ void Player::setTilesRandom()
 		chainTile = std::rand()%4;
 	}
 
-	//int col = std::rand()%2+1;
+	int col = std::rand()%2+1;
 	for(int i = 0; i<4; i++) {
-		tiles.push_back(Tile( std::rand()%2+1 ));
-		//tiles.push_back(Tile( col ));
+		if(true) {
+			tiles.push_back(Tile( std::rand()%2+1 ));
+		} else {
+			tiles.push_back(Tile( col ));
+		}
 	}
 
 	//Modify one of the 'tiles' to be a chain tile

@@ -1,5 +1,5 @@
 #include "Button.h"
-#include <nch/sdl-utils/gfx/TexUtils.h>
+#include <nch/sdl-utils/texture-utils.h>
 #include "Main.h"
 #include "Resources.h"
 
@@ -7,7 +7,7 @@ Button::Button(SDL_Renderer* rend, std::string textStr)
 {
     Button::rend = rend;
 
-    text.init(rend, Resources::getTTF(Resources::carlitoFont));
+    text.init(rend, Resources::getTTF(Resources::oswaldFont));
     setText(textStr);
 }
 Button::~Button(){}
@@ -27,11 +27,27 @@ void Button::draw(int x)
 
     btnRect = br;
 
-    SDL_SetRenderDrawColor(rend, 0, 0, 0, 255);
-    nch::TexUtils::renderFillBorderedRect(rend, &br, scale);
+    bool active = false;
+    int cval;
+    if(active) {
+        //White button
+        cval = 255-96;
+        SDL_SetRenderDrawColor(rend, 255, 255, 255, 255);
+        text.setTextColor(nch::Color(0, 0, 0));
+    } else {
+        //Black button
+        cval = 255;
+        SDL_SetRenderDrawColor(rend, 0, 0, 0, 255);
+        text.setTextColor(nch::Color(255, 255, 255));
+    }
+
+    nch::TexUtils::renderFillBorderedRect(rend, &br, std::ceil(scale*3.), nch::Color(cval, cval, cval));
     
-    text.setScale(Main::getTextScale()*0.125);
-    text.draw(br.x+br.w/2-text.getWidth()/2, br.y+br.h/2-text.getHeight()/2);
+    text.setScale(Main::getTextScale()*0.0625);
+    text.setShadowRelPos(-24, 24);
+    text.setShadowFadeFactor(1.0);
+    text.setShadowCustomColor(nch::Color(128, 128, 128));
+    text.draw(br.x+Main::getTextScale()*8, br.y+br.h/2-text.getHeight()/2);
 }
 
 double Button::getRealWidth() { return unscaledW*scale; }

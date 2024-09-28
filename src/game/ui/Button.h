@@ -1,5 +1,5 @@
 #pragma once
-#include <nch/sdl-utils/gfx/Text.h>
+#include <nch/sdl-utils/text.h>
 #include <SDL2/SDL.h>
 
 class Button {
