@@ -25,6 +25,7 @@ public:
 
 	double getMainSweeperX();
 	int getLevelShown();
+	int getLevelTechnical();
 	uint64_t getIngameTicks64();
 	int getNumCols();
 	int getNumRows();

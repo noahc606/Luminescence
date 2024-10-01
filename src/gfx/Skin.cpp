@@ -11,8 +11,8 @@
 #include "SkinChanger.h"
 #include "TileImg.h"
 
-int Skin::colorSeed = 0;
 bool Skin::musicStopped = false;
+int Skin::luminescenceModifier = 0;
 
 Skin::Skin(std::string parentDir, std::string id, SDL_Renderer* rend)
 {
@@ -95,6 +95,16 @@ void Skin::draw(int numCols, int numRows)
         bgColorMod.a = 255;
     }
 
+    nch::Color bgColorFinal = bgColorMod;
+    if(luminescenceModifier>0) {
+        double weight = (double)luminescenceModifier/40.;
+        if(weight<0.) weight = 0.;
+        if(weight>1.) weight = 1.;
+
+        bgColorFinal = bgColorFinal.getInterpolColor(255, 0, 0, 255, weight);
+        bgColorFinal.brighten(-luminescenceModifier*2);
+    }
+
     //Create "intermediate" textures for tile1Tex and tile2Tex between former and latter skin.
     if(sc.isChanging()) {
 	    SDL_Rect tileR;
@@ -111,14 +121,14 @@ void Skin::draw(int numCols, int numRows)
         //tile1Tex
         nch::TexUtils::clearTexture(rend, tile1Tex);
         SDL_SetRenderTarget(rend, tile1Tex);
-        SDL_SetTextureBlendMode(formerTex1, SDL_BLENDMODE_BLEND);   SDL_SetTextureAlphaMod(formerTex1, 255-bgColorMod.a);   SDL_RenderCopy(rend, formerTex1, NULL, &tileR);
-        SDL_SetTextureBlendMode(latterTex1, SDL_BLENDMODE_BLEND);   SDL_SetTextureAlphaMod(latterTex1, bgColorMod.a);       SDL_RenderCopy(rend, latterTex1, NULL, &tileR);
+        SDL_SetTextureBlendMode(formerTex1, SDL_BLENDMODE_BLEND);   SDL_SetTextureAlphaMod(formerTex1, 255-bgColorFinal.a);   SDL_RenderCopy(rend, formerTex1, NULL, &tileR);
+        SDL_SetTextureBlendMode(latterTex1, SDL_BLENDMODE_BLEND);   SDL_SetTextureAlphaMod(latterTex1, bgColorFinal.a);       SDL_RenderCopy(rend, latterTex1, NULL, &tileR);
         
         //tile2Tex
         nch::TexUtils::clearTexture(rend, tile2Tex);
         SDL_SetRenderTarget(rend, tile2Tex);
-        SDL_SetTextureBlendMode(formerTex2, SDL_BLENDMODE_BLEND);   SDL_SetTextureAlphaMod(formerTex2, 255-bgColorMod.a);   SDL_RenderCopy(rend, formerTex2, NULL, &tileR);
-        SDL_SetTextureBlendMode(latterTex2, SDL_BLENDMODE_BLEND);   SDL_SetTextureAlphaMod(latterTex2, bgColorMod.a);       SDL_RenderCopy(rend, latterTex2, NULL, &tileR);
+        SDL_SetTextureBlendMode(formerTex2, SDL_BLENDMODE_BLEND);   SDL_SetTextureAlphaMod(formerTex2, 255-bgColorFinal.a);   SDL_RenderCopy(rend, formerTex2, NULL, &tileR);
+        SDL_SetTextureBlendMode(latterTex2, SDL_BLENDMODE_BLEND);   SDL_SetTextureAlphaMod(latterTex2, bgColorFinal.a);       SDL_RenderCopy(rend, latterTex2, NULL, &tileR);
 
         SDL_SetRenderTarget(rend, NULL);
     }
@@ -127,18 +137,18 @@ void Skin::draw(int numCols, int numRows)
     if(active) {
         SDL_Rect bgDst = Main::getBGRect();
         
-        SDL_SetRenderDrawColor(rend, bgAlphaColor.r, bgAlphaColor.g, bgAlphaColor.b, bgColorMod.a);
+        SDL_SetRenderDrawColor(rend, bgAlphaColor.r, bgAlphaColor.g, bgAlphaColor.b, bgColorFinal.a);
         SDL_RenderFillRect(rend, &bgDst);
 
         
         if(!bgStaticImg) {
-            if(!noVideo) {
-                mp->renderCurrentVidFrame(NULL, &bgDst, bgColorMod);
+            if(!noVideo) {                
+                mp->renderCurrentVidFrame(NULL, &bgDst, bgColorFinal);
             }
         } else {
             SDL_Texture* bgTex = Resources::getTex(parentDir+"/"+id+"/bg");
-            SDL_SetTextureColorMod(bgTex, bgColorMod.r, bgColorMod.g, bgColorMod.b);
-            SDL_SetTextureAlphaMod(bgTex, bgColorMod.a);
+            SDL_SetTextureColorMod(bgTex, bgColorFinal.r, bgColorFinal.g, bgColorFinal.b);
+            SDL_SetTextureAlphaMod(bgTex, bgColorFinal.a);
             SDL_RenderCopy(rend, bgTex, NULL, &bgDst);
         }
     }
@@ -179,8 +189,6 @@ SDL_Texture* Skin::getSquareTexByType(int type)
     return nullptr;
 }
 
-int Skin::getColorSeed() { return colorSeed; }
-
 std::string Skin::getParentDir() { return parentDir; }
 std::string Skin::getID() { return id; }
 std::string Skin::getStylizedName() { return stylizedName; }
@@ -207,6 +215,10 @@ void Skin::setMusicVolumeFactor(double mvf) { Skin::musicVolumeFactor = mvf; }
 void Skin::setBGAlphaColor(nch::Color bgAlphaColor) { Skin::bgAlphaColor = bgAlphaColor; }
 void Skin::setScorePanelsGeneric(bool scorePanelsGeneric) { Skin::scorePanelsGeneric = scorePanelsGeneric; }
 void Skin::setBGColorMod(nch::Color bgColorMod) { Skin::bgColorMod = bgColorMod; }
+void Skin::incLuminescenceModifier() {
+    if(luminescenceModifier<40)
+    luminescenceModifier++;
+}
 
 void Skin::onMusicFinished()
 {

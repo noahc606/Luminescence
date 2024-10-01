@@ -18,6 +18,9 @@ void SkinSelect::init(SDL_Renderer* rend, std::vector<Skin*>& skins)
         r.x = -1; r.y = -1; r.w = 0; r.h = 0;
         skinBoxes.push_back(r);
     }
+
+    btnStart.init(rend);
+    btnStart.setText("Start");
 }
 
 void SkinSelect::tick()
@@ -60,27 +63,26 @@ void SkinSelect::tick()
             //If not selected: Add new skin to collection
             if(alreadyExistsAt==-1) {
                 selectedSkins.push_back(skinBoxHovered);
+                skinBoxLastSelected = skinBoxHovered;
             //If already selected: Remove this skin from collection
             } else {
                 selectedSkins.erase(selectedSkins.begin()+alreadyExistsAt);
+                skinBoxLastSelected = -1;
             }
         }
     }
 
-    //If we are clicking start
-    if(nch::Input::mouseDownTime(1)==1) {
-        if( mx>startBtnRect.x &&
-            mx<=startBtnRect.x+startBtnRect.w &&
-            my>startBtnRect.y && 
-            my<=startBtnRect.y+startBtnRect.h
-        ) {
-            gameStart = true;
-        }
+    btnStart.tick();
+    
+    if(btnStart.wasClicked()) {
+        gameStart = true;
+        btnStart.unclick();
     }
 }
 
 void SkinSelect::draw()
 {
+    //Common values
     int w = Main::getWidth();
     int h = Main::getHeight();
     double scale = Main::getUIScaleAlt(false)*0.625;
@@ -92,17 +94,25 @@ void SkinSelect::draw()
     SDL_SetRenderDrawColor(rend, 100, 100, 100, 255);
     SDL_RenderFillRect(rend, &bg0);
 
+    //Draw top-right box (most recent skin selected)
+    if(skinBoxLastSelected!=-1) {
+        SDL_Rect bg1;
+        bg1.x = bg0.x+bg0.w+16*scale;
+        bg1.y = bg0.y;
+        bg1.w = 4*48*scale;
+        bg1.h = 4*48*scale;
+
+        drawSkinJacket(skinBoxLastSelected, bg1);
+    }
+
     //Draw start button
-    Button startBtn(rend, "Start");
-    startBtn.bottomSideAnchorY = Main::getHeight()-80*scale;
-    startBtn.bottomSideMaxY = bg0.y+bg0.h;
-    startBtn.scale = Main::getUIScaleAlt(false)*0.625;
-    startBtn.draw(
-        (Main::getWidth()+(bg0.x+bg0.w))/2-startBtn.getRealWidth()/2   //X: In between left side of bg0 and right side of screen
-    );
+    btnStart.bottomSideAnchorY = Main::getHeight()-80*scale;
+    btnStart.bottomSideMaxY = bg0.y+bg0.h;
+    btnStart.scale = Main::getUIScaleAlt(false)*0.625;
+    btnStart.x = (Main::getWidth()+(bg0.x+bg0.w))/2-btnStart.getRealWidth()/2;   //X: In between left side of bg0 and right side of screen
+    btnStart.draw();
 
-    startBtnRect = startBtn.getRect();
-
+    //Draw skin icons (may be filled or empty)
     for(int x = 0; x<10; x++) {
         for(int y = 0; y<10; y++) {
             int index = y*10+x;
@@ -142,6 +152,8 @@ void SkinSelect::draw()
             }
         }
     }
+
+
 
     //Skin box hovered
     if(skinBoxHovered!=-1) {

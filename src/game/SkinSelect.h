@@ -2,6 +2,7 @@
 #include <SDL2/SDL.h>
 #include <vector>
 #include "Skin.h"
+#include "Button.h"
 
 class SkinSelect {
 public:
@@ -26,9 +27,12 @@ private:
     SDL_Renderer* rend;
     std::vector<Skin*> skins;
 
+    Button btnStart;
+
+
     std::vector<SDL_Rect> skinBoxes;
     int skinBoxHovered = -1;
-    SDL_Rect startBtnRect;
+    int skinBoxLastSelected = -1;
 
     std::vector<int> selectedSkins;
     bool gameStart = false;

@@ -47,24 +47,34 @@ void Game::tick()
 
             //Get info about skins
             int numLoaded = loadedSkinIDs.size();
-
-            //Change skin if more than one skin loaded
-            if(numLoaded>1 && tg.getLevelShown()>=(numSkinChanges+1)*4) {
+            bool levelUp = false;
+            if(tg.getLevelShown()>=(numSkinChanges+1)*4) {
                 //Increment # of skin changes; get last & current skin ID from that
                 numSkinChanges++;
-                int lastID = (numSkinChanges-1)%numLoaded; if(lastID<0) lastID += numLoaded;
-                int currID = numSkinChanges%numLoaded;
-                
-                //Change between last and current skin
-                tg.changeSkinTo(skins[loadedSkinIDs[currID]]);
-                sc.changeBetween(skins[loadedSkinIDs[lastID]], skins[loadedSkinIDs[currID]]);
-                sc.start();
-
-                //Activate current skin
-                activeSkinID = loadedSkinIDs[currID];
+                levelUp = true;
             }
 
-            //If the current skin transform is finished
+            //Upon level up...
+            if(levelUp) {
+                int lastID = (numSkinChanges-1)%numLoaded; if(lastID<0) lastID += numLoaded;
+                int currID = numSkinChanges%numLoaded;
+
+                //If more than one skin loaded...
+                if(numLoaded>1) {
+                    //Change between last and current skin
+                    tg.changeSkinTo(skins[loadedSkinIDs[currID]]);
+                    sc.changeBetween(skins[loadedSkinIDs[lastID]], skins[loadedSkinIDs[currID]]);
+                    sc.start();
+                }
+                
+                
+                //If the technical level is >=166 (Shown level: 41-1 on beginner)
+                if(tg.getLevelTechnical()>=164) {
+                    Skin::incLuminescenceModifier();
+                }
+            }
+
+            //If the current skin transform is finished, deactivate the last skin
             if(sc.hasFinished()) {
                 int lastID = (numSkinChanges-1)%numLoaded; if(lastID<0) lastID += numLoaded;
                 skins[loadedSkinIDs[lastID]]->deactivate();

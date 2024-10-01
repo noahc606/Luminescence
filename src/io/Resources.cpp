@@ -261,13 +261,20 @@ void Resources::initSfxAndMusic(SDL_Renderer* rend)
 		nch::FilePath fp(s);
 		std::string ext = fp.getExtension();
 
-		//Add sfx tracks (any file fitting the pattern "['data' or 'res']/skins/[skin name]/sfx/*")
+		//Add sfx files (any file fitting the pattern "['data' or 'res']/skins/[skin name]/sfx/*")
 		if(	fp.getNumDirsDown()==5 &&
 			(fp.getGrandparentDir(4)=="data" || fp.getGrandparentDir(4)=="res") &&
 			fp.getGrandparentDir(3)=="skins" &&
 			fp.getParentDir()=="sfx")
 		{
 			sfxAssetList.push_back(fp.get());
+		}
+
+		//Add sfx within res/audio
+		if(fp.getNumDirsDown()==3) {
+			if(fp.getGrandparentDir(2)=="res" && fp.getParentDir()=="audio") {
+				sfxAssetList.push_back(fp.get());
+			}
 		}
 	}
 	

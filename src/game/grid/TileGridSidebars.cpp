@@ -1,5 +1,6 @@
 #include "TileGridSidebars.h"
 #include <nch/sdl-utils/timer.h>
+#include <nch/sdl-utils/texture-utils.h>
 #include "Main.h"
 #include "Resources.h"
 #include "TileGridManaged.h"
@@ -65,8 +66,9 @@ void TileGridSidebars::drawSidebarUI(SDL_Renderer* rend, Skin* currSkin, nch::Te
 		sptr.y = t0Y;
 		sptr.w = bgr.w/16*2.5;
 		sptr.h = bgr.h/9*1.1;
-		SDL_SetRenderDrawColor(rend, 0, 0, 0, 100);
-		SDL_RenderFillRect(rend, &sptr);
+
+		SDL_SetRenderDrawColor(rend, 0, 0, 0, 180);
+		nch::TexUtils::renderFillBorderedRect(rend, &sptr, 2.*std::ceil(s), nch::Color(255, 255, 255, 80));
 	}
 
 	//Draw 2: t0 and t1

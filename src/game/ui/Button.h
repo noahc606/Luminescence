@@ -8,19 +8,23 @@ public:
         LEFT, CENTER, RIGHT
     };
 
+    Button();
     Button(SDL_Renderer* rend, std::string text);
     ~Button();
+    void init(SDL_Renderer* rend);
 
-    void draw(int x);
+    void draw();
+    void tick();
 
     double getRealWidth();
     double getRealHeight();
     SDL_Rect getRect();
+    bool wasClicked();
 
     void setText(std::string txt);
+    void unclick();
 
-
-    int alignX = CENTER;
+    int x = 0;
     int bottomSideAnchorY = 0;  //Unscaled Y value the bottom side of this button should "try" to be
     int bottomSideMaxY = 99999; //'bottomSideAnchorY' can't be greater than this no matter what
     int unscaledW = 240;
@@ -29,6 +33,9 @@ public:
 
 private:
     SDL_Renderer* rend = nullptr;
+    SDL_Rect rect;
     nch::Text text;
-    SDL_Rect btnRect;
+
+    bool hovering = false;
+    bool clicked = false;
 };

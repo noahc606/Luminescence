@@ -19,7 +19,6 @@ public:
     nch::Color getColorFromTileType(int tileType);
     SDL_Texture* getTileTexByType(int type);
     SDL_Texture* getSquareTexByType(int type);
-	static int getColorSeed();
     std::string getParentDir();
     std::string getID();
     std::string getStylizedName();
@@ -43,6 +42,7 @@ public:
     void setBGColorMod(nch::Color bgColorMod);
     void setBGAlphaColor(nch::Color bgAlphaColor);
     void setScorePanelsGeneric(bool scorePanelsGeneric);
+    static void incLuminescenceModifier();
 
 
 private:
@@ -67,7 +67,6 @@ private:
     static bool musicStopped;
 
     //Graphical - foreground
-	static int colorSeed;
     nch::Color tile1Color; nch::Color tile2Color;
     SDL_Texture* tile1Tex; SDL_Texture* tile2Tex;
     SDL_Texture* square1Tex; SDL_Texture* square2Tex;
@@ -85,4 +84,5 @@ private:
     bool bgStaticImg = false;
     nch::Text skinNameTxt;
     nch::Text skinBpmTxt;
+    static int luminescenceModifier;
 };

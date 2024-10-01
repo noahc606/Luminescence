@@ -31,7 +31,7 @@ MainLoop::MainLoop(SDL_Renderer* rend)
 	loading = false;
 	
 	uint64_t targetTPS = 80;
-	uint64_t maxFPS = 120;
+	uint64_t maxFPS = 300;
 	uint64_t nsPerTick = 1000000000/targetTPS;	int tps = 0;
 	uint64_t nsPerFrame = 1000000000/maxFPS;	int fps = 0;
 	uint64_t tickNextNS = 0;

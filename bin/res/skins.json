@@ -5,38 +5,10 @@
     "bpm": 60.0
 },
 {
-    "id": "machine_interface_normal",
-    "stylizedName": "MACHINE INTERFACE",
-    "bpm": 100.0
-},
-{
-    "id": "manager_class",
-    "stylizedName": "Manager class",
-    "bpm": 100.0
-},
-{
-    "id": "mental_gymnastic_60sec",
-    "stylizedName": "Mental gymnastic (60s)",
-    "bpm": 120.0,
-    "musicVolumeFactor": 1.4
-},
-{
-    "id": "neodymium",
-    "stylizedName": "Neodymium",
-    "bpm": 120.0,
-    "musicVolumeFactor": 2.0
-},
-{
     "id": "neon_sunset",
     "stylizedName": "N E O N _ S U N S E T",
     "bpm": 35.0,
     "musicVolumeFactor": 2.0
-},
-{
-    "id": "square_dance",
-    "stylizedName": "SQUARE DANCE",
-    "bpm": 122.0,
-    "backgroundPrimaryColor": [125, 125, 125]
 },
 {
     "id": "starstruck",

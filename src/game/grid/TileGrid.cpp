@@ -167,6 +167,7 @@ double TileGrid::getMainSweeperX()
 }
 
 int TileGrid::getLevelShown() { return tgs.getLevelShown(); }
+int TileGrid::getLevelTechnical() { return tgs.getLevelTechnical(); }
 uint64_t TileGrid::getIngameTicks64()
 {
 	return
