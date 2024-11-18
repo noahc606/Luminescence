@@ -30,13 +30,15 @@ The original <i>Lumines</i> games were not too portable or moddable, hence the c
 
 # Running
 Within 'bin' there are three executables. I built these three to demonstrate the aforementioned cross-platform compatibility.
-|System        |Executable you should run  |Notes                          |
-|--------------|---------------------------|-------------------------------|
-| Windows >=10 | Luminescence-windows.exe  |                               |
-| Linux x64    | Luminescence-linux-amd64  | Built on Debian 12            |
-| Linux ARMv7l | Luminescence-linux-armv7l | Built on Raspbian on a RPI3 * |   
+| System       | Executable you should run | Notes                            |
+|--------------|---------------------------|----------------------------------|
+| Windows >=10 | Luminescence-windows.exe  | [1*]                             |
+| Linux x64    | Luminescence-linux-amd64  | Built on Debian 12               |
+| Linux ARMv7l | Luminescence-linux-armv7l | Built on Raspbian on a RPI3 [2*] |
 
-*There are slowdown/timing issues within the ARMv7l executable (32 bit OS issue?), but it is still playable. This is due to issues I still have to iron out within <a href="https://github.com/noahc606/nch-cpp-utils">NCH-CPP-Utils</a>.
+[1*] You can't resize the window on Windows (ha) because this breaks the renderer/textures. I need to implement recreation of the renderer + all textures whenever the window resizes. (<a href="https://stackoverflow.com/questions/78801018/created-textures-break-in-sdl2-when-resizing-a-window">Relevant Issue</a>)
+
+[2*] There are slowdown/timing issues within the ARMv7l executable (32 bit OS issue?), but it is still playable. This is due to issues I still have to iron out within <a href="https://github.com/noahc606/nch-cpp-utils">NCH-CPP-Utils</a>.
 
 # Building
 Building is cross-platform and uses CMake.
