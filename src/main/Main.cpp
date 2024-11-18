@@ -10,7 +10,7 @@ static SDL_Window* window = nullptr;
 static SDL_Renderer* renderer = nullptr;
 static SDL_PixelFormat* windowPixelFormat = nullptr;
 
-int main()
+int main(int argc, char *argv[])
 {
 	/* 1 - SDL initialization */
 	//Create flags
@@ -25,13 +25,18 @@ int main()
 		
 	/* 2 - Window */
 	//Create window, checking if successful
-	window = SDL_CreateWindow("Luminescence", SDL_WINDOWPOS_UNDEFINED_DISPLAY(0), SDL_WINDOWPOS_UNDEFINED_DISPLAY(0), 640, 480, 0);
+	window = SDL_CreateWindow("Luminescence", SDL_WINDOWPOS_UNDEFINED_DISPLAY(0), SDL_WINDOWPOS_UNDEFINED_DISPLAY(0), 960, 720, 0);
 	if(window==NULL) {
 		printf("Window is null! %s\n", SDL_GetError());
 	}
-	//Set window to be visible and resizable
+	//Set window to be visible and resizable (if not on windows)
 	SDL_ShowWindow(window);
 	SDL_SetWindowResizable(window, SDL_TRUE);
+	#if ( defined(_WIN32) || defined(WIN32) )
+		SDL_SetWindowResizable(window, SDL_FALSE);
+	#endif
+
+	
 	//Store pixel format of the window
 	windowPixelFormat = SDL_AllocFormat(SDL_PIXELFORMAT_RGBA8888);
 
@@ -40,6 +45,8 @@ int main()
 	Uint32 rendererFlags = SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE;
 	//Create renderer with flags, checking if successful
 	//SDL_SetHintWithPriority(SDL_HINT_RENDER_VSYNC, "0", SDL_HINT_OVERRIDE);
+	SDL_SetHint(SDL_HINT_RENDER_DRIVER, "opengl");
+
 	renderer = SDL_CreateRenderer(window, -1, rendererFlags);
 	if(renderer==NULL) {
 		printf("Renderer is null! %s\n", SDL_GetError());
@@ -53,6 +60,14 @@ int main()
 	SDL_Quit();
 	return 0;
 }
+
+#if ( defined(_WIN32) || defined(WIN32) )
+int WinMain()
+{
+    char** x = new char*[1];
+    return main(0, x);
+}
+#endif
 
 SDL_Window* Main::getWindow() { return window; }
 SDL_PixelFormat* Main::getWindowPixelFormat() { return windowPixelFormat; } 
