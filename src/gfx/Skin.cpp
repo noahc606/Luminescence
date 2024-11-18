@@ -50,8 +50,8 @@ void Skin::load(int numCols, int numRows)
     nch::FilePath vfp(videoPath);
     if(vfp.getExtension()!="png") {
         if(videoPath!="?null?") {
-            mp = new nch::MediaPlayer(videoPath, rend);
-            mp->decodeFull();
+            smp = new nch::SimpleMediaPlayer(videoPath, rend);
+            smp->decodeFull();
             noVideo = false;
         }
     } else {
@@ -63,7 +63,7 @@ void Skin::activate(uint64_t ingameTimeMS)
 {
     //Play video
     if(!noVideo) {
-        mp->startPlayback(true);
+        smp->startPlayback();
     }
     //Play background music
 	playMusic(this);
@@ -142,8 +142,8 @@ void Skin::draw(int numCols, int numRows)
 
         
         if(!bgStaticImg) {
-            if(!noVideo) {                
-                mp->renderCurrentVidFrame(NULL, &bgDst, bgColorFinal);
+            if(!noVideo) {
+                smp->renderCurrentVidFrame(NULL, &bgDst, bgColorFinal);
             }
         } else {
             SDL_Texture* bgTex = Resources::getTex(parentDir+"/"+id+"/bg");
@@ -262,6 +262,8 @@ void Skin::updateScaling(int numCols, int numRows)
 	gridScale = 10;
 	int playWidth = Main::getWidth()*2/3;
 	int playHeight = Main::getHeight()*2/3;
+
+    if(numRows>numCols*2) playHeight = Main::getHeight()*5/6;
 	
 	while(numCols*32*gridScale>playWidth) { gridScale -= 0.125; }
 	while(numRows*32*gridScale>playHeight) { gridScale -= 0.125; }

@@ -97,7 +97,7 @@ TTF_Font* Resources::getTTF(std::string asset, bool canFallback)
 			if(asset!="res/fonts/FreeMono") {
 				return getTTF("res/fonts/FreeMono");
 			} else {
-				printf("Could not default TrueTypeFont \"%s\" in ttfResources\n", asset.c_str());
+				printf("Could not load default TrueTypeFont \"%s\" in ttfResources\n", asset.c_str());
 				return nullptr;
 			}
 		} else {
@@ -202,7 +202,11 @@ void Resources::loadMusRes(nch::FilePath fp)
 void Resources::initTTFs()
 {
 	std::vector<std::string> resDirs = {"data", "res"};
-	std::vector<std::string> resList = nch::FsUtils::getDirContents(resDirs, nch::FsUtils::ONLY_FILES, true);
+
+	nch::FsUtils::ListSettings lise;
+	nch::FsUtils::RecursionSettings rese; rese.recursiveSearch = true;
+	std::vector<std::string> resList = nch::FsUtils::getManyDirContents(resDirs, lise, rese);	
+	
 	std::vector<std::string> ttfResList;
 	for(std::string s : resList) {
 		nch::FilePath fp(s);
@@ -222,7 +226,11 @@ void Resources::initTTFs()
 void Resources::initImages(SDL_Renderer* rend)
 {
 	std::vector<std::string> resDirs = {"data", "res"};
-	std::vector<std::string> resList = nch::FsUtils::getDirContents(resDirs, nch::FsUtils::ONLY_FILES, true);
+
+	nch::FsUtils::ListSettings lise;
+	nch::FsUtils::RecursionSettings rese; rese.recursiveSearch = true;
+	std::vector<std::string> resList = nch::FsUtils::getManyDirContents(resDirs, lise, rese);
+	
 	std::vector<std::string> imgResList;
 	for(std::string s : resList) {
 		nch::FilePath fp(s);
@@ -242,7 +250,11 @@ void Resources::initImages(SDL_Renderer* rend)
 void Resources::initSfxAndMusic(SDL_Renderer* rend)
 {
 	std::vector<std::string> assetDirs = {"data", "res"};
-	std::vector<std::string> assetList = nch::FsUtils::getDirContents(assetDirs, nch::FsUtils::ONLY_FILES, true);
+
+	nch::FsUtils::ListSettings lise;
+	nch::FsUtils::RecursionSettings rese; rese.recursiveSearch = true;
+	std::vector<std::string> assetList = nch::FsUtils::getManyDirContents(assetDirs, lise, rese);
+	
 	std::vector<std::string> musAssetList;
 	for(std::string s : assetList) {
 		nch::FilePath fp(s);

@@ -1,17 +1,17 @@
 #pragma once
+#include <memory>
 #include <SDL2/SDL.h>
+#include "GUIHandler.h"
 #include "TileGrid.h"
 #include "SkinChanger.h"
-#include "SkinSelect.h"
+#include "SkinSelector.h"
 
 class Game {
 public:
     enum States {
-        TESTING, MODE_SELECT, SKIN_SELECT, TILE_GRID
-    };
-
-    enum Difficulty {
-        BEGINNER = 0, INTERMEDIATE, ADVANCED, EXPERT, SUPER_EXPERT
+        TESTING,
+        PREGAME,
+        TILE_GRID
     };
 
     Game();
@@ -21,13 +21,14 @@ public:
     void draw();
     void drawDebug(std::stringstream& ss);
 
-    void initTileGrid(int difficulty);
+    void initTileGrid();
     void switchState(int newGameState, int gameStateData);
     void switchState(int newGameState);
 
     static SkinChanger getSkinChanger();
 
 private:
+    void processAction(int lastAction);
     void fetchSkins(std::string parentDir);
     void loadConfigOptions(std::string configFile);
     bool loadSelectedSkins();
@@ -38,11 +39,13 @@ private:
     std::vector<int> loadedSkinIDs;
     int activeSkinID = -1;
     SDL_Renderer* rend = nullptr;
+    std::unique_ptr<GUIHandler> guiHandler = nullptr;
 
     int gamestate = -1;
     TileGrid tg;
-    SkinSelect ss;
-    int selectedDifficulty = BEGINNER;
+    SkinSelector* ss = nullptr;
+
+    TileGrid::GameSettings gameSettings;
     static SkinChanger sc;
     int numSkinChanges = 0;
 };

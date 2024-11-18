@@ -1,6 +1,6 @@
 #pragma once
 #include <nch/cpp-utils/color.h>
-#include <nch/ffmpeg-utils/mediaplayer.h>
+#include <nch/ffmpeg-utils/simplemediaplayer.h>
 #include <nch/sdl-utils/text.h>
 #include <SDL2/SDL.h>
 #include <string>
@@ -77,7 +77,7 @@ private:
  
     //Graphical - background
     SDL_Renderer* rend;
-    nch::MediaPlayer* mp;
+    nch::SimpleMediaPlayer* smp;
     SDL_Texture* videoTexture = nullptr;
     bool active = false;
     bool noVideo = true;

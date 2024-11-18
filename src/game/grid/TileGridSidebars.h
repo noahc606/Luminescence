@@ -7,7 +7,8 @@
 
 class TileGridSidebars {
 public:
-	void init(SDL_Renderer* rend, int difficulty);
+	void preinit(int difficulty);
+	void init(SDL_Renderer* rend);
     void tick(uint64_t ingameTimeMS);
 	void drawSidebarUI(SDL_Renderer* rend, Skin* currSkin, nch::Text& t0, std::string t0Str, nch::Text& t1, std::string t1Str, int index);
     void draw(SDL_Renderer* rend, Skin* currSkin, Player* player, int numSweepedThisCycle, double mainSweeperX);
@@ -51,7 +52,7 @@ private:
 
 	//Level, score, erased, combos
     int level = 0;
-    int levelTechnical = 0; //Starting: Beginner (0), Intermediate (40), Advanced (80), Expert (120), Super Expert (160)
+    int levelTechnical = -1; //Starting: Beginner (0), Intermediate (40), Advanced (80), Expert (120), Super Expert (160)
 	int totalScore = 0;
 	int totalErased = 0;
 	int totalErasedTechnical = levelTechnical*20;

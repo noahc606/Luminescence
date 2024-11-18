@@ -5,10 +5,14 @@
 #include "Resources.h"
 #include "TileGridManaged.h"
 
-void TileGridSidebars::init(SDL_Renderer* rend, int difficulty)
-{	
-	levelTechnical = 40*difficulty;
+void TileGridSidebars::preinit(int difficulty)
+{
+	if(levelTechnical==-1)
+		levelTechnical = 40*difficulty;
+}
 
+void TileGridSidebars::init(SDL_Renderer* rend)
+{
 	//Text displays
 	std::string rsf = Resources::sidebarFont;
 	lvlTxt.init(rend, Resources::getTTF(rsf));		lvlNTxt.init(rend, Resources::getTTF(rsf));

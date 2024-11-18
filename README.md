@@ -14,11 +14,11 @@ The original <i>Lumines</i> games were not too portable or moddable, hence the c
 - Fancy title/pause menus
 
 ### New Features:
-- Max framerate of 300FPS (compared to <i>Lumines Remastered's</i> 60).
+- Max framerate of 120FPS (compared to <i>Lumines Remastered's</i> 60).
 - Multi-platform compatibility.
 - Custom grid sizes.
 - 5 custom skins made by myself.
-- (Hardcoded lowest difficulty for now) 5 difficulties to start from.
+- 5 difficulties to start from.
 
 ### Controls
 - W or joystick hat UP to rotate right

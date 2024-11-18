@@ -12,7 +12,9 @@ class TileGridManaged {
 public:
 	typedef std::vector<std::vector<Tile>> t_grid;
 
+	void preinit(std::pair<int, int> gridSize);
 	void init(Skin* currSkin);
+	
 	static Tile getTileWithin(t_grid& grid, int x, int y);
     Tile getTile(int x, int y);
     bool isTilePartComplete(int x, int y);
@@ -38,8 +40,8 @@ public:
 	//Tiles
 	t_grid grid;
 	std::vector<FallingTile> fallingTiles;
-	const int numCols = (int)(16);
-	const int numRows = (int)(10);
+	int numCols = (int)(16);
+	int numRows = (int)(10);
 
 	//Logic
     int64_t counter = 0;

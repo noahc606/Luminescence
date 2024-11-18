@@ -26,20 +26,7 @@ Tests::Tests(SDL_Renderer* rend)
 
 
     return;
-	nch::FsUtils fsu;
-	std::vector<std::string> resDirs = {"data", "res"};
-    for(std::string s : fsu.getDirContents(resDirs, fsu.ALL, true)) {
-        nch::FilePath fp(s);
-        printf("%s\n", fp.get().c_str());
-    }
-
-    std::vector<int> vec = {0, 1, 2, 3, 4, 5};
-    uint64_t t0 = nch::Timer::getTicks64();
-    for(int i = 0; i<100000; i++) {
-        Resources::getTex("res/urbanization/tile_a");
-    }
-    uint64_t t1 = nch::Timer::getTicks64();
-    printf("Time elapsed: %dms.\n", t1-t0);
+	
 }
 Tests::~Tests()
 {

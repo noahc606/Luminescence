@@ -4,6 +4,12 @@
 #include "Resources.h"
 #include "TileImg.h"
 
+void TileGridManaged::preinit(std::pair<int, int> gridSize)
+{
+	numCols = gridSize.first;
+	numRows = gridSize.second;
+}
+
 void TileGridManaged::init(Skin* currSkin)
 {
 	//Set current skin
@@ -23,6 +29,7 @@ void TileGridManaged::init(Skin* currSkin)
 
 	lastStartTimeMS = nch::Timer::getTicks64();
 }
+
 
 Tile TileGridManaged::getTileWithin(t_grid& grid, int x, int y)
 {

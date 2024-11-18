@@ -11,18 +11,24 @@
 #include "Text.h"
 #include "TileImg.h"
 
-void TileGrid::init(SDL_Renderer* rend, std::vector<Skin*> skins, int currSkinID, int difficulty)
+void TileGrid::preinit(GameSettings& gs)
+{
+	if(gs.mode==GameMode::SURVIVAL) tgm.preinit(std::make_pair(8, 20));
+	tgs.preinit(gs.diff);
+}
+
+void TileGrid::init(SDL_Renderer* rend, std::vector<Skin*> skins, int currSkinID)
 {
 	//Setup skins
 	if(skins.size()==0) {
-		printf("Error: skins.size()==0 (TileGrid::init() at the wrong time?)\n");
+		nch::Log::errorv(__PRETTY_FUNCTION__, "skins.size()==0", "Failed to TileGrid::init()");
 		return;
 	}
 	TileGrid::skins = skins;
 
 	//Setup TileGrid subsystems - TileGridManaged and TileGridSidebars
 	tgm.init(TileGrid::skins[currSkinID]);
-	tgs.init(rend, difficulty);
+	tgs.init(rend);
 
 	//Setup player(s)
 	players.clear();
@@ -361,8 +367,7 @@ void TileGrid::tickPlayer(Player* pl)
 
 void TileGrid::tickMainPlayerControls(Player* pl)
 {
-	int holdDelay = 20-tgs.getLevelTechnical()/16;
-	if(holdDelay<15) holdDelay = 15;
+	int holdDelay = 15;
 
 	int holdingRotR = nch::Input::keyDownTime(SDLK_w) + nch::Input::joystickHatDirTime(nch::Input::UP);		//W or joystick hat UP to rotate right
 	int holdingRotL = nch::Input::keyDownTime(SDLK_s) + nch::Input::joystickHatDirTime(nch::Input::DOWN);	//S or joystick hat DOWN to rotate left

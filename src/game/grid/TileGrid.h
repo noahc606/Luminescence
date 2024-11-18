@@ -15,7 +15,16 @@
 
 class TileGrid {
 public:
-	void init(SDL_Renderer* rend, std::vector<Skin*> skins, int currSkinID, int difficulty);
+    enum Difficulty { BEGINNER = 0, INTERMEDIATE, ADVANCED, EXPERT, SUPER_EXPERT };
+    enum GameMode { CHALLENGE, SURVIVAL };
+
+    typedef struct {
+        int mode = CHALLENGE;
+        int diff = BEGINNER;
+    } GameSettings;
+
+	void preinit(GameSettings& gs);
+	void init(SDL_Renderer* rend, std::vector<Skin*> skins, int currSkinID);
 	void destroy();
 
 	void tick();

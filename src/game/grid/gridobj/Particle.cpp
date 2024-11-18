@@ -19,7 +19,7 @@ void Particle::init(double x, double y, int type, SDL_Renderer* rend, nch::Color
     //Init infoTxt based on type
     if(rend!=nullptr) {
         if(type==SWEEP_COUNT_INDICATOR) {
-            infoTxt.init(rend, Resources::getTTF(Resources::primaryFont));
+            infoTxt.init(rend, Resources::getTTF(Resources::oswaldFont));
             std::stringstream ss; ss << info;
             infoTxt.setText(ss.str());
         }

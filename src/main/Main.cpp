@@ -57,19 +57,8 @@ int main()
 SDL_Window* Main::getWindow() { return window; }
 SDL_PixelFormat* Main::getWindowPixelFormat() { return windowPixelFormat; } 
 
-int Main::getWidth()
-{
-	int w;
-	SDL_GetWindowSize(window, &w, NULL);
-	return w;
-}
-
-int Main::getHeight()
-{
-	int h;
-	SDL_GetWindowSize(window, NULL, &h);
-	return h;
-}
+int Main::getWidth() { int w; SDL_GetWindowSize(window, &w, NULL); return w; }
+int Main::getHeight() { int h; SDL_GetWindowSize(window, NULL, &h); return h; }
 
 SDL_Rect Main::getBGRect()
 {

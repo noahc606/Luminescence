@@ -3,6 +3,7 @@
 #include <nlohmann/json.hpp>
 #include <nch/cpp-utils/filepath.h>
 #include <nch/cpp-utils/fs-utils.h>
+#include <nch/cpp-utils/log.h>
 #include <nch/sdl-utils/timer.h>
 #include "GridImg.h"
 #include "Main.h"
@@ -17,11 +18,12 @@ void Game::init(SDL_Renderer* rend)
     uint64_t t0 = nch::Timer::getTicks64();
     
     Game::rend = rend;
+    Game::guiHandler = std::make_unique<GUIHandler>(rend);
+
     fetchSkins("data/skins");
     fetchSkins("res/skins");
     loadConfigOptions("data/config");
-    ss.init(rend, skins);
-    switchState(TILE_GRID, selectedDifficulty);
+    switchState(PREGAME);
     
     uint64_t t1 = nch::Timer::getTicks64();
     printf("Game initialized in %dms.\n", t1-t0);
@@ -29,18 +31,16 @@ void Game::init(SDL_Renderer* rend)
 
 void Game::tick()
 {
+    guiHandler->tick(gamestate);
+    
+    processAction(guiHandler->getLastAction());
+    if(guiHandler->getLastActionData()!=-1) {
+        guiHandler->resetLastAction();
+    }
+
     switch(gamestate) {
-        case TESTING: {
-            //for(int i = 0; i<9000000; i++) {
-                //int x = 12345;
-            //}
-        } break;
-        case SKIN_SELECT: {
-            ss.tick();
-            if(ss.hasGameStarted()) {
-                switchState(TILE_GRID, selectedDifficulty);
-            }
-        } break;
+        case TESTING: {} break;
+        case PREGAME: {} break;
         case TILE_GRID: {
             tg.tick();
             sc.tick();
@@ -81,20 +81,18 @@ void Game::tick()
                 sc.reset();
             }
         } break;
+        ////////////////////////////////////////////////////////////////
         default: { printf("Tick for invalid gamestate \"%d\"!\n", gamestate); } break;
     }
 }
 
 void Game::draw()
 {
+    guiHandler->draw();
+
     switch(gamestate) {
-        case TESTING: {
-            
-        } break;
-        case MODE_SELECT: {
-            
-        } break;
-        case SKIN_SELECT:   { ss.draw(); } break;
+        case TESTING: {} break;
+        case PREGAME: {} break;
         case TILE_GRID: {
             //All black
             SDL_SetRenderDrawColor(rend, 0, 0, 0, 255);
@@ -113,15 +111,19 @@ void Game::drawDebug(std::stringstream& ss)
     }
 }
 
-void Game::initTileGrid(int difficulty)
+void Game::initTileGrid()
 {
     printf("Starting game...\n");
 
+    //Pre-Initialize tile grid.
+    tg.preinit(gameSettings);
+
     //Load selected skins
     if(loadSelectedSkins()==true) {
-        //Activate the first skin and initialize tile grid.
+        //Put first skin into TileGrid
         Skin* firstSkin = skins.at(loadedSkinIDs[0]);
-        tg.init(rend, skins, loadedSkinIDs[0], difficulty);
+        tg.init(rend, skins, loadedSkinIDs[0]);
+        //Activate the first skin
         firstSkin->activate(tg.getIngameTicks64());
     }
 }
@@ -130,17 +132,20 @@ void Game::switchState(int newGameState, int gameStateData)
 {
     printf("Switching gamestate to %d...\n", newGameState);
     gamestate = newGameState;
+
     switch(gamestate) {
-        case SKIN_SELECT: {
+        case PREGAME: {
+            guiHandler->switchUIs(GUIHandler::cid_pregame);
+            guiHandler->setScreenID(0);
+            GUI* temp = guiHandler->getGUI(GUIHandler::IDs::sksr_main);
+            if(temp!=nullptr) {
+                ss = (SkinSelector*)temp;
+                ss->loadSkins(skins);    
+            }
             
         } break;
         case TILE_GRID: {
-            if(gameStateData==-1) {
-                initTileGrid(Difficulty::BEGINNER);    
-            } else {
-                initTileGrid(Difficulty::BEGINNER+gameStateData);
-            }
-            
+            initTileGrid();
         } break;
         default: {
             printf("Init for invalid gamestate \"%d\"!\n", gamestate);
@@ -152,6 +157,45 @@ void Game::switchState(int newGameState) { switchState(newGameState, -1); }
 
 SkinChanger Game::getSkinChanger() { return sc; }
 
+void Game::processAction(int lastAction)
+{
+    int action = lastAction;
+    int data = guiHandler->getLastActionData();
+    
+    
+    switch(action) {
+        case GUIHandler::btn_selectMode_x: {
+            gameSettings.mode = TileGrid::GameMode::CHALLENGE+data;
+            nch::Log::log("Selected game mode %d.", data);
+        } break;
+        case GUIHandler::btn_selectLayout_x: {
+            nch::Log::log("Selected layout type %d.", data);
+
+            //Set selected skins depending on layout type 'data'
+            switch(data) {
+                case 0: case 1: case 2: {
+                    ss->setSelectedSkins(ss->getDefaultSelection(data));
+                } break;
+                case 3: { ss->setSelectedSkins(ss->getRandomSelection(20)); } break;
+                case 4: { ss->setSelectedSkins(ss->getRandomSelection(40)); } break;
+                case 5: { ss->setSelectedSkins(ss->getRandomSelection(123456)); } break;
+                default: { ss->setSelectedSkins({}); } break;
+            }
+        } break;
+        case GUIHandler::btn_selectDifficulty_x: {
+
+            if(data!=-100) {
+                gameSettings.diff = TileGrid::Difficulty::BEGINNER+data;
+                nch::Log::log("Selected difficulty %d.", gameSettings.diff); 
+
+                if(gamestate!=TILE_GRID) {
+                    switchState(TILE_GRID, 0);
+                }
+            }
+        } break;
+    }
+}
+
 void Game::fetchSkins(std::string parentDir)
 {
     //parentDir should be either: "data/skins" or "res/skins".
@@ -162,6 +206,7 @@ void Game::fetchSkins(std::string parentDir)
         printf("Loading \"%s\"...\n", dataFile.get().c_str());
         std::ifstream f(dataFile.get());
         nlohmann::json data = nlohmann::json::parse(f);
+        f.close();
         printf("Found a total of %d skins within \"%s\".\n", data["skins"].size(), dataFile.get().c_str());
 
         auto skinlist = data["skins"];
@@ -229,23 +274,24 @@ bool Game::loadSelectedSkins()
     //Get selection from the SkinSelect menu
     std::vector<int> skindexes;
     if(!configDemoStart) {
-        skindexes = ss.getSelectedSkins();
+        skindexes = ss->getSelectedSkins();
     } else {
-        using namespace std;
         std::vector<std::pair<std::string, std::string>> preset = {
-            make_pair("res/skins", "neodymium"),
-            make_pair("res/skins", "manager_class")
+            std::make_pair("res/skins", "jades"),
+            std::make_pair("res/skins", "whirlworld")
         };
         for(int i = 0; i<preset.size(); i++) {
-            int index = ss.getSkinIndexByRes(preset[i].first, preset[i].second);
+            int index = ss->getSkinIndexByRes(preset[i].first, preset[i].second);
             if(index!=-1) skindexes.push_back(index);
         }
 
     }
 
     if(skindexes.size()==0) {
-        ss.cancelGameStart();
-        switchState(SKIN_SELECT);
+        ss->cancelFinishedSelection();
+        if(gamestate!=PREGAME) {
+            switchState(PREGAME, 123);
+        }
         return false;
     }
     
