@@ -145,6 +145,7 @@ void Game::switchState(int newGameState, int gameStateData)
             
         } break;
         case TILE_GRID: {
+            guiHandler->switchUIs(GUIHandler::cid_activegame);
             initTileGrid();
         } break;
         default: {

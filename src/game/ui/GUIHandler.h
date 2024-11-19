@@ -24,6 +24,7 @@ public:
     };
     enum CollectionIDs {
         cid_pregame,
+        cid_activegame,
     };
 
     GUIHandler(SDL_Renderer* rend);

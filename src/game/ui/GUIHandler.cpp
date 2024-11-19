@@ -1,8 +1,10 @@
 #include "GUIHandler.h"
 #include <map>
+#include <nch/sdl-utils/timer.h>
 #include "Game.h"
 #include "Main.h"
 #include "Tooltip.h"
+
 
 GUIHandler::GUIHandler(SDL_Renderer* rend)
 {
@@ -157,6 +159,7 @@ void GUIHandler::switchUIs(int collectionID, int modifier)
     clearUIs();
 
     switch(collectionID) {
+        case cid_activegame: {} break;
         case cid_pregame:
         {
             /* Screen 0: Select mode */
