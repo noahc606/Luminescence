@@ -77,6 +77,11 @@ void Resources::init(SDL_Renderer* rend)
 		for(auto it = musResources.begin(); it != musResources.end(); ++it) printf("Music loaded: %s as %p\n", it->first.c_str(), it->second);
 	}
 
+	//Set icon
+	SDL_Surface* tempico = IMG_Load("res/icon.png");
+	SDL_SetWindowIcon(Main::getWindow(), tempico);
+	SDL_FreeSurface(tempico);
+
 	uint64_t t1 = nch::Timer::getTicks64();
 	printf("%d resources loaded in %dms.\n", imgResources.size()+sfxResources.size()+musResources.size(), t1-t0);
 }
