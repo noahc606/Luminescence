@@ -1,6 +1,6 @@
 #include "GUIHandler.h"
 #include <map>
-#include <nch/sdl-utils/timer.h>
+#include <nch/cpp-utils/timer.h>
 #include "Game.h"
 #include "Main.h"
 #include "Tooltip.h"

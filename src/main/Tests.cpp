@@ -2,7 +2,7 @@
 #include <iostream>
 #include <nch/cpp-utils/filepath.h>
 #include <nch/cpp-utils/fs-utils.h>
-#include <nch/sdl-utils/timer.h>
+#include <nch/cpp-utils/timer.h>
 #include <SDL2/SDL.h>
 #include "Color.h"
 #include "Resources.h"

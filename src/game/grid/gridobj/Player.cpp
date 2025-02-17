@@ -1,6 +1,6 @@
 #include "Player.h"
 #include "Main.h"
-#include <nch/sdl-utils/timer.h>
+#include <nch/cpp-utils/timer.h>
 #include "TileImg.h"
 
 Player::Player(){}
@@ -22,7 +22,7 @@ void Player::reset(int x, int y, Player p)
 	this->x = x;
 	this->y = y;
 	
-	std::srand(nch::Timer::getTicks64()+std::rand());
+	std::srand(nch::Timer::getTicks()+std::rand());
 	tiles.clear();
 	for(int i = 0; i<4; i++) {
 		tiles.push_back(p.getTile(i));

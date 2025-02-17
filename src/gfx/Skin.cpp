@@ -3,7 +3,7 @@
 #include <nch/cpp-utils/fs-utils.h>
 #include <nch/sdl-utils/text.h>
 #include <nch/sdl-utils/texture-utils.h>
-#include <nch/sdl-utils/timer.h>
+#include <nch/cpp-utils/timer.h>
 #include "Game.h"
 #include "GridImg.h"
 #include "Main.h"

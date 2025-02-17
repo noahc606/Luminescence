@@ -1,7 +1,7 @@
 #include "TileGrid.h"
 #include <nch/cpp-utils/log.h>
+#include <nch/cpp-utils/timer.h>
 #include <nch/sdl-utils/input.h>
-#include <nch/sdl-utils/timer.h>
 #include <set>
 #include <time.h>
 #include "GridImg.h"
@@ -177,7 +177,7 @@ int TileGrid::getLevelTechnical() { return tgs.getLevelTechnical(); }
 uint64_t TileGrid::getIngameTicks64()
 {
 	return
-		nch::Timer::getTicks64()-
+		nch::Timer::getTicks()-
 		tgm.pausedTimeMS-
 		tgm.lastStartTimeMS;
 }

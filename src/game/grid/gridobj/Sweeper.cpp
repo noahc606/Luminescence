@@ -1,6 +1,6 @@
 #include "Sweeper.h"
 #include <nch/cpp-utils/color.h>
-#include <nch/sdl-utils/timer.h>
+#include <nch/cpp-utils/timer.h>
 #include <nch/sdl-utils/texture-utils.h>
 
 Sweeper::Sweeper(Skin* skin, uint64_t creationTimeMS)

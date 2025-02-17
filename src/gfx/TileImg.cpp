@@ -1,7 +1,7 @@
 #include "TileImg.h"
 #include <iostream>
+#include <nch/cpp-utils/timer.h>
 #include <nch/sdl-utils/texture-utils.h>
-#include <nch/sdl-utils/timer.h>
 #include "Color.h"
 #include "TileGrid.h"
 #include "Main.h"
@@ -11,7 +11,7 @@ void TileImg::drawChainTex(SDL_Renderer* rend, SDL_Rect tile, double gridScale)
 {
 	double s = gridScale;
 
-	uint64_t t = nch::Timer::getTicks64()/10;
+	uint64_t t = nch::Timer::getTicks()/10;
 
 	nch::Color c1 = nch::Color(255-(t%64)*2, 255-(t%64)*2, 255-(t%64)*2);	//Light bezel (top left)
 	nch::Color c2 = nch::Color(0, 64-(t%64), 64-(t%64));					//Dark bezel (bottom right)
@@ -197,7 +197,7 @@ void TileImg::drawTile(SDL_Renderer* rend, Skin* skin, double gridX, double grid
 				drawChainTex(rend, squareR, scale);
 			}
 			if(t.chainPart) {
-				uint64_t t = (nch::Timer::getTicks64()/10)%64;
+				uint64_t t = (nch::Timer::getTicks()/10)%64;
 				SDL_SetRenderDrawColor(rend, 0, 255-t, 255-t, 64-t/2);
 				SDL_RenderFillRect(rend, &squareR);
 			}

@@ -1,7 +1,7 @@
 #include "Resources.h"
 #include <fstream>
 #include <nch/cpp-utils/fs-utils.h>
-#include <nch/sdl-utils/timer.h>
+#include <nch/cpp-utils/timer.h>
 #include <nch/sdl-utils/texture-utils.h>
 #include <nlohmann/json.hpp>
 #include "Main.h"
@@ -28,7 +28,7 @@ Resources::~Resources(){}
 
 void Resources::init(SDL_Renderer* rend)
 {
-	uint64_t t0 = nch::Timer::getTicks64();
+	uint64_t t0 = nch::Timer::getTicks();
 	//Quit if already initialized
     if(initialized) {
         printf("Resources already initialized.\n");
@@ -82,7 +82,7 @@ void Resources::init(SDL_Renderer* rend)
 	SDL_SetWindowIcon(Main::getWindow(), tempico);
 	SDL_FreeSurface(tempico);
 
-	uint64_t t1 = nch::Timer::getTicks64();
+	uint64_t t1 = nch::Timer::getTicks();
 	printf("%d resources loaded in %dms.\n", imgResources.size()+sfxResources.size()+musResources.size(), t1-t0);
 }
 

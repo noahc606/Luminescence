@@ -11,27 +11,14 @@ public:
 private:
 	bool running = true;
 	uint64_t timer = 0;
-	uint64_t secLast = 0;
-	int currentTPS = 0;
-	int currentFPS = 0;
 	
-	uint64_t getAvgNSPF();
-	uint64_t getAvgNSPT();
 	
-	void tick();
-	void draw(SDL_Renderer* rend);
-	void event();
+	static void tick();
+	static void draw(SDL_Renderer* rend);
 	
-	bool loading = true;
-	Game game;
-	nch::Input input;
+	static bool loading;
+	static Game game;
 
-	nch::Text debugTxt;
-	uint64_t secLastDebugged = 0;
-
-	//uint64_t maxFPS = 300;
-	//uint64_t fpsTarget = 0;
-	uint64_t lastGameLoopMS = 0;
-	std::vector<uint64_t> tickTimesNS;
-	std::vector<uint64_t> frameTimesNS;
+	static nch::Text debugTxt;
+	static uint64_t secLast;
 };

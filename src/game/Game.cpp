@@ -4,7 +4,7 @@
 #include <nch/cpp-utils/filepath.h>
 #include <nch/cpp-utils/fs-utils.h>
 #include <nch/cpp-utils/log.h>
-#include <nch/sdl-utils/timer.h>
+#include <nch/cpp-utils/timer.h>
 #include "GridImg.h"
 #include "Main.h"
 
@@ -15,7 +15,7 @@ Game::~Game(){}
 
 void Game::init(SDL_Renderer* rend)
 {
-    uint64_t t0 = nch::Timer::getTicks64();
+    uint64_t t0 = nch::Timer::getTicks();
     
     Game::rend = rend;
     Game::guiHandler = std::make_unique<GUIHandler>(rend);
@@ -25,7 +25,7 @@ void Game::init(SDL_Renderer* rend)
     loadConfigOptions("data/config");
     switchState(PREGAME);
     
-    uint64_t t1 = nch::Timer::getTicks64();
+    uint64_t t1 = nch::Timer::getTicks();
     printf("Game initialized in %dms.\n", t1-t0);
 }
 
@@ -297,7 +297,7 @@ bool Game::loadSelectedSkins()
     }
     
     //Go through all the skins selected, and load them
-    uint64_t t0 = nch::Timer::getTicks64();
+    uint64_t t0 = nch::Timer::getTicks();
     for(int i = 0; i<skindexes.size(); i++) {
         Skin* skin = skins.at(skindexes[i]);
         if(skin==nullptr) {
@@ -308,7 +308,7 @@ bool Game::loadSelectedSkins()
     }
     loadedSkinIDs = skindexes;
 
-    uint64_t t1 = nch::Timer::getTicks64();
+    uint64_t t1 = nch::Timer::getTicks();
     printf("Loaded %d skins in %dms\n", skindexes.size(), t1-t0);
 
     return true;

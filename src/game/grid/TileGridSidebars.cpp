@@ -1,5 +1,5 @@
 #include "TileGridSidebars.h"
-#include <nch/sdl-utils/timer.h>
+#include <nch/cpp-utils/timer.h>
 #include <nch/sdl-utils/texture-utils.h>
 #include "Main.h"
 #include "Resources.h"
@@ -22,7 +22,7 @@ void TileGridSidebars::init(SDL_Renderer* rend)
 	comboTxt.init(rend, Resources::getTTF(rsf));	comboNTxt.init(rend, Resources::getTTF(rsf));
 	timelineTxt.init(rend, Resources::getTTF(Resources::oswaldFont));
 	
-	sdlTickStarted = nch::Timer::getTicks64();
+	sdlTickStarted = nch::Timer::getTicks();
 }
 
 void TileGridSidebars::tick(uint64_t ingameTimeMS)
@@ -113,7 +113,7 @@ void TileGridSidebars::draw(SDL_Renderer* rend, Skin* currSkin, Player* player, 
 
 	//Player queue
 	if(playerQueue.size()==4) {
-		double tileDY = -((double)(nch::Timer::getTicks64()-lastPlayerReset))/500.;
+		double tileDY = -((double)(nch::Timer::getTicks()-lastPlayerReset))/500.;
 		if(tileDY<-1) tileDY = -1;
 
 		if(tileDY!=-1) {
@@ -154,7 +154,7 @@ int TileGridSidebars::getPlayerQueueCommonType()
 
 void TileGridSidebars::resetPlayerQueue(Player* player, int px, int py)
 {
-	lastPlayerReset = nch::Timer::getTicks64();
+	lastPlayerReset = nch::Timer::getTicks();
 
 	//Re-create player queue if it doesn't have 3 players in it
 	if(playerQueue.size()!=4) {

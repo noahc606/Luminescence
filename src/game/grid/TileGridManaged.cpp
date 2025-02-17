@@ -1,6 +1,6 @@
 #include "TileGridManaged.h"
 #include <nch/cpp-utils/log.h>
-#include <nch/sdl-utils/timer.h>
+#include <nch/cpp-utils/timer.h>
 #include "Resources.h"
 #include "TileImg.h"
 
@@ -27,7 +27,7 @@ void TileGridManaged::init(Skin* currSkin)
 		grid.push_back(thisCol);
 	}
 
-	lastStartTimeMS = nch::Timer::getTicks64();
+	lastStartTimeMS = nch::Timer::getTicks();
 }
 
 

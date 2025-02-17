@@ -1,4 +1,5 @@
 /bin/data
 /build
+/build-release
 /include/nch
 /.zhelper
